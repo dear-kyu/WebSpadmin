@@ -8,7 +8,7 @@ require_once __DIR__ . '/../models/UserModel.php';
 
 define('LAYANAN_PER_HALAMAN', 6);
 define('MAKS_UKURAN_BUKTI_BAYAR', 2 * 1024 * 1024);
-define('PASSWORD_MIN_LENGTH', 6);
+define('PASSWORD_MIN_LENGTH', 8);
 
 pastikanStrukturUser($conn);
 hanguskanReservasiKadaluwarsa($conn);
@@ -396,10 +396,8 @@ function prosesProfil() {
 function validasiDanUpdatePassword($conn, $userId, $passwordBaru) {
     if ($passwordBaru === '') return null;
 
-    if (strlen($passwordBaru) < PASSWORD_MIN_LENGTH) {
-        return "Password baru minimal " . PASSWORD_MIN_LENGTH . " karakter.";
-    }
-
+    $pesanPassword = validasiPasswordPelanggan($passwordBaru, 'Password baru');
+    if ($pesanPassword !== null) return $pesanPassword;
     updatePasswordPelanggan($conn, $userId, $passwordBaru);
     return null;
 }

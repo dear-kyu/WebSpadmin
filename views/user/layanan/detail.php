@@ -42,13 +42,6 @@ if (strpos($namaLayananLower, 'wajah') !== false || strpos($namaLayananLower, 'f
 
     <section class="detail-service-section container pt-4 pb-0">
 
-        <div class="mb-3 reveal-stagger delay-1">
-            <a href="index.php?action=layanan" class="detail-back-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="back-arrow-icon"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-                <span>Kembali</span>
-            </a>
-        </div>
-
         <?php if (isset($_GET['pesan_sukses'])): ?>
             <div class="floating-alert success" id="floatingAlert" role="status" aria-live="polite">
                 <div class="alert-icon">
@@ -140,7 +133,7 @@ if (strpos($namaLayananLower, 'wajah') !== false || strpos($namaLayananLower, 'f
                 <?php $isAddon = ($layanan['kategori'] === 'Tambahan' || $layanan['kategori'] === 'Tambahan Bekam'); ?>
                 <div class="detail-action-stack reveal-stagger delay-4">
                     <?php if (isInCart($layanan['id'])): ?>
-                        <form method="POST" action="index.php?action=hapus-keranjang" onsubmit="return confirm('Apakah Anda yakin ingin menghapus layanan ini dari keranjang?');" class="detail-remove-form">
+                        <form method="POST" action="index.php?action=hapus-keranjang" class="detail-remove-form" data-cart-confirm data-confirm-title="Hapus layanan?" data-confirm-message="Layanan ini akan dihapus dari keranjang Anda." data-confirm-label="Hapus">
                             <input type="hidden" name="layanan_id" value="<?= (int) $layanan['id'] ?>">
                             <input type="hidden" name="redirect_to" value="index.php?action=detail-layanan&id=<?= (int) $layanan['id'] ?>">
                             <button type="submit" class="detail-secondary-action">

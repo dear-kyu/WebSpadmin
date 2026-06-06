@@ -46,6 +46,10 @@ $bodyClass = 'auth-page login-auth-page';
                     <div class="register-input-wrap">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                         <input type="password" id="password" name="password" placeholder="Masukkan password" required>
+                        <button class="password-toggle" type="button" data-toggle-password="password" aria-label="Tampilkan password">
+                            <svg class="eye-open" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            <svg class="eye-closed" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18"></path><path d="M10.6 10.6A3 3 0 0 0 12 15a3 3 0 0 0 2.4-1.2"></path><path d="M7.1 7.1C3.8 8.9 2 12 2 12s3.5 6 10 6c1.7 0 3.2-.4 4.5-1"></path><path d="M14.1 5.2C19.2 6.1 22 12 22 12s-.8 1.4-2.3 2.8"></path></svg>
+                        </button>
                     </div>
                 </div>
                 <button type="submit" class="register-submit">Masuk</button>

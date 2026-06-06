@@ -2063,12 +2063,12 @@ document.addEventListener("DOMContentLoaded", function() {
     ];
     $layananIds = isset($cartItems) ? array_keys($cartItems) : [];
     
-    $resDates = $conn->query("SELECT DISTINCT DATE(reservation_date) as tgl FROM reservasi WHERE status_reservation IN ('Diterima', 'Dikonfirmasi')");
     $datesToCheck = [];
-    if ($resDates) {
-        while ($row = $resDates->fetch_assoc()) {
-            $datesToCheck[] = $row['tgl'];
-        }
+    $startDate = new DateTime();
+    for ($i = 0; $i < 7; $i++) {
+        $dateClone = clone $startDate;
+        $dateClone->modify("+$i days");
+        $datesToCheck[] = $dateClone->format('Y-m-d');
     }
 
     $globalInterval = intval(ambilPengaturan($conn, 'interval_reservasi', '30'));

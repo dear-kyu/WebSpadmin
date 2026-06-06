@@ -127,9 +127,10 @@
         }
 
         bindAjaxCartForms();
+        initPasswordControls();
     });
 
-    function showCartToast(message, success = true) {
+    function showCartToast(message, success = true, tone = '') {
         let alertEl = document.getElementById('ajaxCartAlert');
         if (!alertEl) {
             alertEl = document.createElement('div');
@@ -146,8 +147,9 @@
             });
         }
 
-        alertEl.classList.remove('success', 'error', 'show');
-        alertEl.classList.add(success ? 'success' : 'error');
+        const alertTone = tone || (success ? 'success' : 'error');
+        alertEl.classList.remove('success', 'error', 'danger', 'show');
+        alertEl.classList.add(alertTone);
         alertEl.querySelector('.alert-icon').innerHTML = success
             ? '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>'
             : '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
@@ -190,16 +192,64 @@
         if (!button || !data.success) return;
 
         if (data.mode === 'add') {
-            form.action = 'index.php?action=hapus-keranjang';
-            button.innerHTML = button.innerHTML.replace('Tambahkan ke Keranjang', 'Hapus dari Keranjang');
-            button.innerHTML = button.innerHTML.replace('Tambah ke Keranjang', 'Hapus dari Keranjang');
-            button.innerHTML = button.innerHTML.replace('Pilih Paket', 'Hapus dari Keranjang');
+            form.setAttribute('action', 'index.php?action=hapus-keranjang');
+            form.dataset.cartConfirm = '';
+            form.dataset.confirmTitle = 'Hapus layanan?';
+            form.dataset.confirmMessage = 'Layanan ini akan dihapus dari keranjang Anda.';
+            form.dataset.confirmLabel = 'Hapus';
+            button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>Hapus';
             button.classList.add('is-in-cart');
+            button.classList.add('is-added');
         } else if (data.mode === 'remove') {
-            form.action = 'index.php?action=tambah-keranjang';
-            button.innerHTML = button.innerHTML.replace('Hapus dari Keranjang', 'Tambahkan ke Keranjang');
+            form.setAttribute('action', 'index.php?action=tambah-keranjang');
+            form.removeAttribute('data-cart-confirm');
+            delete form.dataset.confirmTitle;
+            delete form.dataset.confirmMessage;
+            delete form.dataset.confirmLabel;
+            button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>Keranjang';
             button.classList.remove('is-in-cart');
+            button.classList.remove('is-added');
         }
+    }
+
+    function initPasswordControls() {
+        document.querySelectorAll('[data-toggle-password]').forEach((button) => {
+            const input = document.getElementById(button.getAttribute('data-toggle-password'));
+            if (!input) return;
+
+            button.addEventListener('click', () => {
+                const visible = input.type === 'text';
+                input.type = visible ? 'password' : 'text';
+                button.classList.toggle('is-visible', !visible);
+                button.setAttribute('aria-label', visible ? 'Tampilkan password' : 'Sembunyikan password');
+            });
+        });
+
+        document.querySelectorAll('[data-password-rules]').forEach((input) => {
+            const list = document.querySelector('[data-password-requirements="' + input.id + '"]');
+            if (!list) return;
+            list.querySelector('[data-rule="max"]')?.remove();
+
+            const updateRules = () => {
+                const value = input.value;
+                const rules = {
+                    min: value.length >= 8,
+                    uppercase: /[A-Z]/.test(value),
+                    special: /[^A-Za-z0-9]/.test(value),
+                };
+                list.classList.toggle('is-visible', value.length > 0);
+
+                Object.keys(rules).forEach((rule) => {
+                    const item = list.querySelector('[data-rule="' + rule + '"]');
+                    if (item) item.classList.toggle('is-valid', rules[rule]);
+                });
+            };
+
+            input.addEventListener('input', updateRules);
+            input.addEventListener('focus', updateRules);
+            input.addEventListener('blur', updateRules);
+            updateRules();
+        });
     }
 
     function bindAjaxCartForms() {
@@ -207,13 +257,23 @@
             const form = event.target;
             if (!(form instanceof HTMLFormElement)) return;
 
-            const action = form.getAttribute('action') || '';
+            const action = form.action || form.getAttribute('action') || '';
             const isAdd = action.includes('action=tambah-keranjang');
             const isRemove = action.includes('action=hapus-keranjang');
             const isCartPage = new URLSearchParams(window.location.search).get('action') === 'keranjang';
 
             if (!isAdd && !isRemove) return;
             if (isRemove && isCartPage) return;
+
+            if (isRemove && form.hasAttribute('data-cart-confirm') && form.dataset.confirmed !== '1') {
+                event.preventDefault();
+                openGlobalCartConfirm(form);
+                return;
+            }
+
+            if (form.dataset.confirmed === '1') {
+                delete form.dataset.confirmed;
+            }
 
             event.preventDefault();
 
@@ -233,13 +293,70 @@
 
                 updateCartBadges(Number(data.cart_count || 0));
                 updateSubmittedCartForm(form, data);
-                showCartToast(data.message || 'Keranjang diperbarui.', Boolean(data.success));
+                showCartToast(data.message || 'Keranjang diperbarui.', Boolean(data.success), isRemove && data.success ? 'danger' : '');
             } catch (error) {
                 showCartToast('Keranjang belum bisa diperbarui. Coba lagi sebentar.', false);
             } finally {
                 if (button) button.disabled = false;
             }
         });
+    }
+
+    function openGlobalCartConfirm(form) {
+        let modal = document.getElementById('globalCartConfirmModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'globalCartConfirmModal';
+            modal.className = 'cart-confirm-modal global-cart-confirm-modal';
+            modal.hidden = true;
+            modal.setAttribute('role', 'dialog');
+            modal.setAttribute('aria-modal', 'true');
+            modal.setAttribute('aria-labelledby', 'globalCartConfirmTitle');
+            modal.setAttribute('aria-describedby', 'globalCartConfirmMessage');
+            modal.innerHTML = `
+                <div class="cart-confirm-dialog">
+                    <div class="cart-confirm-icon" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path></svg>
+                    </div>
+                    <h2 class="cart-confirm-title" id="globalCartConfirmTitle">Konfirmasi</h2>
+                    <p class="cart-confirm-message" id="globalCartConfirmMessage">Apakah Anda yakin ingin melanjutkan?</p>
+                    <div class="cart-confirm-actions">
+                        <button type="button" class="cart-confirm-cancel" data-confirm-cancel>Batal</button>
+                        <button type="button" class="cart-confirm-accept" data-confirm-accept>Ya, lanjutkan</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        const title = modal.querySelector('#globalCartConfirmTitle');
+        const message = modal.querySelector('#globalCartConfirmMessage');
+        const cancel = modal.querySelector('[data-confirm-cancel]');
+        const accept = modal.querySelector('[data-confirm-accept]');
+
+        title.textContent = form.dataset.confirmTitle || 'Konfirmasi';
+        message.textContent = form.dataset.confirmMessage || 'Apakah Anda yakin ingin melanjutkan?';
+        accept.textContent = form.dataset.confirmLabel || 'Ya, lanjutkan';
+        modal.hidden = false;
+        requestAnimationFrame(() => modal.classList.add('is-open'));
+        cancel.focus();
+
+        const close = () => {
+            modal.classList.remove('is-open');
+            setTimeout(() => {
+                if (!modal.classList.contains('is-open')) modal.hidden = true;
+            }, 180);
+        };
+
+        cancel.onclick = close;
+        modal.onclick = (event) => {
+            if (event.target === modal) close();
+        };
+        accept.onclick = () => {
+            close();
+            form.dataset.confirmed = '1';
+            form.requestSubmit();
+        };
     }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
