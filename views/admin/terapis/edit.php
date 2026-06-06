@@ -1,0 +1,81 @@
+
+
+<?php if (!empty($error)): ?>
+    <div style="background-color: var(--danger-bg); border: 1px solid var(--danger); color: var(--danger); padding: 15px; border-radius: var(--radius-sm); margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
+        <i class="fa-solid fa-circle-exclamation"></i> <?php echo htmlspecialchars($error); ?>
+    </div>
+<?php endif; ?>
+
+<div class="panel">
+    <div class="panel-header">
+        <h3 class="panel-title">Form Ubah Data Terapis</h3>
+        <a href="admin.php?page=terapis" class="btn-spa btn-spa-outline">
+            <i class="fa-solid fa-arrow-left"></i> Kembali
+        </a>
+    </div>
+    
+    <div class="panel-body">
+        <form action="admin.php?page=terapis&action=edit&id=<?php echo $terapis['idTerapis'] ?? $terapis['id_terapis']; ?>" method="POST">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="namaTerapis">Nama Lengkap Terapis</label>
+                    <input type="text" id="namaTerapis" name="namaTerapis" class="form-control" value="<?php echo htmlspecialchars($terapis['namaTerapis'] ?? $terapis['nama_terapis']); ?>" required autocomplete="off" oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '');">
+                </div>
+                
+                <div class="form-group">
+                    <label for="noTelp">Nomor Telepon / WA</label>
+                    <input type="text" id="noTelp" name="noTelp" class="form-control" value="<?php echo htmlspecialchars($terapis['noTelp'] ?? $terapis['no_telp']); ?>" required autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, ''); if(this.value.length < 10 || this.value.length > 13) { document.getElementById('err_no_telp').style.display = 'block'; } else { document.getElementById('err_no_telp').style.display = 'none'; }">
+                    <small id="err_no_telp" style="color: var(--danger); display: none; margin-top: 5px;">*Nomor telepon harus berupa angka dan berjumlah 10-13 digit.</small>
+                </div>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Spesialisasi & Keahlian</label>
+                    <?php 
+                    $selectedSpesialisasi = array_map('trim', preg_split('/,| dan /i', $terapis['spesialisasi'] ?? ''));
+                    $options = $layananOptions ?? [];
+                    ?>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; padding: 5px 0;">
+                        <?php foreach ($options as $opt): ?>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 500; color: var(--text-dark); font-size: 0.85rem;">
+                                <input type="checkbox" name="spesialisasi[]" value="<?php echo htmlspecialchars($opt); ?>" 
+                                       <?php echo in_array($opt, $selectedSpesialisasi) ? 'checked' : ''; ?>
+                                       style="accent-color: var(--accent); width: 16px; height: 16px; cursor: pointer;">
+                                <?php echo htmlspecialchars($opt); ?>
+                            </label>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Jenis Kelamin</label>
+                    <?php $jk = $terapis['jenisKelamin'] ?? $terapis['jenis_kelamin'] ?? 'Perempuan'; ?>
+                    <div style="display: flex; gap: 20px; align-items: center; padding: 5px 0;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 500; color: var(--text-dark);">
+                            <input type="radio" name="jenis_kelamin" value="Perempuan" <?php echo ($jk === 'Perempuan') ? 'checked' : ''; ?> style="accent-color: var(--accent); width: 18px; height: 18px; cursor: pointer;"> Perempuan
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 500; color: var(--text-dark);">
+                            <input type="radio" name="jenis_kelamin" value="Laki-Laki" <?php echo ($jk === 'Laki-Laki' || $jk === 'Laki-laki' || $jk === 'Pria') ? 'checked' : ''; ?> style="accent-color: var(--accent); width: 18px; height: 18px; cursor: pointer;"> Laki-Laki
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group" style="margin-top: 15px;">
+                <label for="status">Status Terapis</label>
+                <select id="status" name="status" class="form-control" style="max-width: 50%;">
+                    <option value="Aktif" <?php echo $terapis['status'] === 'Aktif' ? 'selected' : ''; ?>>Aktif (Siap Menerima Pelanggan)</option>
+                    <option value="Tidak Aktif" <?php echo $terapis['status'] === 'Tidak Aktif' ? 'selected' : ''; ?>>Tidak Aktif (Cuti / Berhenti)</option>
+                </select>
+            </div>
+            
+            <div class="form-actions">
+                <a href="admin.php?page=terapis" class="btn-spa btn-spa-outline">Batal</a>
+                <button type="submit" class="btn-spa btn-spa-accent">
+                    <i class="fa-solid fa-floppy-disk"></i> Perbarui Data Terapis
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
