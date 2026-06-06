@@ -29,7 +29,7 @@ function prosesLogin() {
     $password = trim($_POST['password'] ?? '');
 
     if (empty($email) || empty($password)) {
-        $pesanError = "Email dan password wajib diisi.";
+        $pesanError = "nama,email dan password wajib di isi";
         include __DIR__ . '/../views/auth/login.php';
         return;
     }
@@ -66,7 +66,7 @@ function prosesRegister() {
     $konfirmasiPassword = trim($_POST['konfirmasi_password'] ?? '');
 
     if ($nama === '' || $email === '' || $telepon === '' || $password === '' || $konfirmasiPassword === '') {
-        $pesanError = "Semua data registrasi wajib diisi.";
+        $pesanError = "nama,email dan password wajib di isi";
         include __DIR__ . '/../views/auth/register.php';
         return;
     }

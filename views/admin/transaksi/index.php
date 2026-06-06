@@ -1,4 +1,3 @@
-
 <?php
 
 if (!function_exists('rupiah')) {
@@ -7,18 +6,6 @@ if (!function_exists('rupiah')) {
     }
 }
 ?>
-
-<?php if (!empty($success)): ?>
-    <div style="background-color: var(--success-bg); border: 1px solid var(--success); color: var(--success); padding: 15px; border-radius: var(--radius-sm); margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
-        <i class="fa-solid fa-circle-check"></i> <?php echo htmlspecialchars($success); ?>
-    </div>
-<?php endif; ?>
-
-<?php if (!empty($error)): ?>
-    <div style="background-color: var(--danger-bg); border: 1px solid var(--danger); color: var(--danger); padding: 15px; border-radius: var(--radius-sm); margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
-        <i class="fa-solid fa-circle-exclamation"></i> <?php echo htmlspecialchars($error); ?>
-    </div>
-<?php endif; ?>
 
 
 <div class="admin-section-tabs">
@@ -49,7 +36,7 @@ if (!function_exists('rupiah')) {
     <div class="panel-header">
         <h3 class="panel-title">Daftar Riwayat Transaksi Kasir</h3>
     </div>
-    
+
     <div class="panel-body" style="padding: 0;">
         <div class="table-responsive">
             <table class="custom-table" data-admin-paginate data-per-page="6" data-noun="data">
@@ -75,9 +62,9 @@ if (!function_exists('rupiah')) {
                             </td>
                         </tr>
                     <?php else: ?>
-                        <?php 
-                        $no = 1; 
-                        foreach ($transaksiList as $tx): 
+                        <?php
+                        $no = 1;
+                        foreach ($transaksiList as $tx):
                         ?>
                             <tr>
                                 <td style="text-align: center; font-weight: 600; color: var(--text-muted);"><?php echo $no++; ?></td>
@@ -89,12 +76,13 @@ if (!function_exists('rupiah')) {
                                     <small class="text-muted"><?php echo htmlspecialchars($tx['noHpPelanggan'] ?? '-'); ?></small>
                                 </td>
                                 <td>
-                                    <div style="font-size: 0.88rem; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="<?php echo htmlspecialchars($tx['layananNames']); ?>">
+                                    <div style="font-size: 0.88rem; max-width: 220px; white-space: normal; word-break: break-word; line-height: 1.45;">
                                         <?php echo htmlspecialchars($tx['layananNames']); ?>
                                     </div>
                                 </td>
                                 <td>
-                                    <?php echo date('d M Y H:i', strtotime($tx['transactionDate'])); ?> WIB
+                                    <?php echo date('d M Y', strtotime($tx['transactionDate'])); ?><br>
+                                    <small style="color: var(--text-muted);"><?php echo date('H:i', strtotime($tx['transactionDate'])); ?> WIB</small>
                                 </td>
                                 <td>
                                     <strong style="color: var(--accent-hover); font-size: 1.05rem;"><?php echo rupiah($tx['totalPayment']); ?></strong>

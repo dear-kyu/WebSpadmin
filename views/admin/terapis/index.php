@@ -1,18 +1,3 @@
-
-
-<?php if (!empty($success)): ?>
-    <div style="background-color: var(--success-bg); border: 1px solid var(--success); color: var(--success); padding: 15px; border-radius: var(--radius-sm); margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
-        <i class="fa-solid fa-circle-check"></i> <?php echo htmlspecialchars($success); ?>
-    </div>
-<?php endif; ?>
-
-<?php if (!empty($error)): ?>
-    <div style="background-color: var(--danger-bg); border: 1px solid var(--danger); color: var(--danger); padding: 15px; border-radius: var(--radius-sm); margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
-        <i class="fa-solid fa-circle-exclamation"></i> <?php echo htmlspecialchars($error); ?>
-    </div>
-<?php endif; ?>
-
-
 <!-- Search Bar -->
 <div class="panel" style="margin-bottom: 20px;">
     <div class="panel-body" style="padding: 14px 20px;">
@@ -24,7 +9,6 @@
         </div>
     </div>
 </div>
-
 
 <div class="panel">
     <div class="panel-header">
@@ -50,7 +34,7 @@
                 <tbody>
                     <?php if (empty($terapisList)): ?>
                         <tr>
-                            <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                            <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
                                 <i class="fa-solid fa-user-doctor mb-2 d-block fs-3"></i> Belum ada data terapis terdaftar.
                             </td>
                         </tr>
