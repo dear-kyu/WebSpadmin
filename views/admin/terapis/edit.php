@@ -18,14 +18,19 @@
         <form action="admin.php?page=terapis&action=edit&id=<?php echo $terapis['idTerapis'] ?? $terapis['id_terapis']; ?>" method="POST">
             <div class="form-grid">
                 <div class="form-group">
-                    <label for="namaTerapis">Nama Lengkap Terapis</label>
-                    <input type="text" id="namaTerapis" name="namaTerapis" class="form-control" value="<?php echo htmlspecialchars($terapis['namaTerapis'] ?? $terapis['nama_terapis']); ?>" required autocomplete="off" oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '');">
+                    <label for="namaTerapis">Nama Lengkap Terapis <span class="req-star">*</span></label>
+                    <input type="text" id="namaTerapis" name="namaTerapis" class="form-control" value="<?php echo htmlspecialchars($terapis['namaTerapis'] ?? $terapis['nama_terapis']); ?>" required autocomplete="off" oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, ''); this.setCustomValidity('')"
+                           oninvalid="this.setCustomValidity('kolom wajib di isi')">
+                    <span class="field-hint"><i class="fa-solid fa-circle-info"></i> Hanya huruf dan spasi — tidak boleh mengandung angka atau simbol</span>
                 </div>
                 
                 <div class="form-group">
-                    <label for="noTelp">Nomor Telepon / WA</label>
-                    <input type="text" id="noTelp" name="noTelp" class="form-control" value="<?php echo htmlspecialchars($terapis['noTelp'] ?? $terapis['no_telp']); ?>" required autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, ''); if(this.value.length < 10 || this.value.length > 13) { document.getElementById('err_no_telp').style.display = 'block'; } else { document.getElementById('err_no_telp').style.display = 'none'; }">
+                    <label for="noTelp">Nomor Telepon / WA <span class="req-star">*</span></label>
+                    <input type="text" id="noTelp" name="noTelp" class="form-control" value="<?php echo htmlspecialchars($terapis['noTelp'] ?? $terapis['no_telp']); ?>" required autocomplete="off" 
+                           oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity(''); if(this.value.length > 0 && (this.value.length < 10 || this.value.length > 13)) { document.getElementById('err_no_telp').style.display = 'block'; } else { document.getElementById('err_no_telp').style.display = 'none'; }"
+                           oninvalid="this.setCustomValidity('kolom wajib di isi')">
                     <small id="err_no_telp" style="color: var(--danger); display: none; margin-top: 5px;">*Nomor telepon harus berupa angka dan berjumlah 10-13 digit.</small>
+                    <span class="field-hint"><i class="fa-solid fa-circle-info"></i> Hanya angka, panjang 10–13 digit — contoh: 0812XXXXXXXX</span>
                 </div>
             </div>
             

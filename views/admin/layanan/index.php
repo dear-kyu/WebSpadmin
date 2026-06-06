@@ -1,25 +1,10 @@
-
 <?php
-
 if (!function_exists('rupiah')) {
     function rupiah($angka) {
         return "Rp " . number_format($angka, 0, ',', '.');
     }
 }
 ?>
-
-<?php if (!empty($success)): ?>
-    <div style="background-color: var(--success-bg); border: 1px solid var(--success); color: var(--success); padding: 15px; border-radius: var(--radius-sm); margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
-        <i class="fa-solid fa-circle-check"></i> <?php echo htmlspecialchars($success); ?>
-    </div>
-<?php endif; ?>
-
-<?php if (!empty($error)): ?>
-    <div style="background-color: var(--danger-bg); border: 1px solid var(--danger); color: var(--danger); padding: 15px; border-radius: var(--radius-sm); margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
-        <i class="fa-solid fa-circle-exclamation"></i> <?php echo htmlspecialchars($error); ?>
-    </div>
-<?php endif; ?>
-
 
 <!-- Search Bar -->
 <div class="panel" style="margin-bottom: 20px;">
@@ -32,7 +17,6 @@ if (!function_exists('rupiah')) {
         </div>
     </div>
 </div>
-
 
 <div class="panel">
     <div class="panel-header">
@@ -69,7 +53,7 @@ if (!function_exists('rupiah')) {
                             <tr>
                                 <td style="text-align: center; font-weight: 600; color: var(--text-muted);"><?php echo $no++; ?></td>
                                 <td>
-                                    <strong><?php echo htmlspecialchars($l['namaLayanan']); ?></strong>
+                                    <strong><?php echo htmlspecialchars($l['namaLayanan'] ?? $l['nama_layanan']); ?></strong>
                                 </td>
                                 <td>
                                     <span style="font-weight: 500;"><i class="fa-regular fa-clock text-muted mr-1" style="margin-right: 5px;"></i> <?php echo htmlspecialchars($l['durasi']); ?> Menit</span>
@@ -84,12 +68,12 @@ if (!function_exists('rupiah')) {
                                 </td>
                                 <td>
                                     <div class="btn-actions" style="justify-content: center;">
-                                        <a href="admin.php?page=layanan&action=edit&id=<?php echo $l['idLayanan']; ?>" class="btn-icon" title="Ubah Data">
+                                        <a href="admin.php?page=layanan&action=edit&id=<?php echo $l['idLayanan'] ?? $l['id_layanan']; ?>" class="btn-icon" title="Ubah Data">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </a>
-                                        <a href="admin.php?page=layanan&action=delete&id=<?php echo $l['idLayanan']; ?>" 
+                                        <a href="admin.php?page=layanan&action=delete&id=<?php echo $l['idLayanan'] ?? $l['id_layanan']; ?>" 
                                            class="btn-icon btn-icon-danger btn-confirm-delete" 
-                                           data-message="Apakah Anda yakin ingin menghapus layanan: <?php echo htmlspecialchars($l['namaLayanan']); ?>? Hapus layanan dapat berakibat pada hilangnya data reservasi dan transaksi terkait."
+                                           data-message="Apakah Anda yakin ingin menghapus layanan: <?php echo htmlspecialchars($l['namaLayanan'] ?? $l['nama_layanan']); ?>? Hapus layanan dapat berakibat pada hilangnya data reservasi dan transaksi terkait."
                                            title="Hapus Data">
                                             <i class="fa-solid fa-trash-can"></i>
                                         </a>

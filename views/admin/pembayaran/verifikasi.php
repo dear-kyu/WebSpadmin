@@ -8,11 +8,7 @@ if (!function_exists('rupiah')) {
 }
 ?>
 
-<?php if (!empty($error)): ?>
-    <div style="background-color: var(--danger-bg); border: 1px solid var(--danger); color: var(--danger); padding: 15px; border-radius: var(--radius-sm); margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
-        <i class="fa-solid fa-circle-exclamation"></i> <?php echo htmlspecialchars($error); ?>
-    </div>
-<?php endif; ?>
+
 
 <div class="panel">
     <div class="panel-header">

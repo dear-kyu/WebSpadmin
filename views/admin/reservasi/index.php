@@ -1,4 +1,3 @@
-
 <?php
 
 if (!function_exists('rupiah')) {
@@ -9,17 +8,6 @@ if (!function_exists('rupiah')) {
 $statusFilter = isset($_GET['status']) ? trim($_GET['status']) : 'Semua';
 ?>
 
-<?php if (!empty($success)): ?>
-    <div style="background-color: var(--success-bg); border: 1px solid var(--success); color: var(--success); padding: 15px; border-radius: var(--radius-sm); margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
-        <i class="fa-solid fa-circle-check"></i> <?php echo htmlspecialchars($success); ?>
-    </div>
-<?php endif; ?>
-
-<?php if (!empty($error)): ?>
-    <div style="background-color: var(--danger-bg); border: 1px solid var(--danger); color: var(--danger); padding: 15px; border-radius: var(--radius-sm); margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
-        <i class="fa-solid fa-circle-exclamation"></i> <?php echo htmlspecialchars($error); ?>
-    </div>
-<?php endif; ?>
 
 
 
@@ -71,7 +59,7 @@ $statusFilter = isset($_GET['status']) ? trim($_GET['status']) : 'Semua';
                         <th style="width: 80px; text-align: center;">ID</th>
                         <th>Profil Pelanggan</th>
                         <th>Layanan SPA</th>
-                        <th>Tanggal & Jam Reservasi</th>
+                        <th>Tanggal &amp; Jam Reservasi</th>
                         <th>Terapis Bertugas</th>
                         <th>Status</th>
                         <th style="width: 120px; text-align: center;">Detail</th>
@@ -93,7 +81,7 @@ $statusFilter = isset($_GET['status']) ? trim($_GET['status']) : 'Semua';
                                     <small style="color: var(--text-muted);"><i class="fa-solid fa-phone" style="font-size: 0.75rem; margin-right: 3px;"></i> <?php echo htmlspecialchars($r['noHpPelanggan']); ?></small>
                                 </td>
                                 <td>
-                                    <div style="font-size: 0.9rem; font-weight: 600; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="<?php echo htmlspecialchars($r['layananNames']); ?>">
+                                    <div style="font-size: 0.9rem; font-weight: 600; max-width: 250px; white-space: normal; line-height: 1.4; word-break: break-word;">
                                         <?php echo htmlspecialchars($r['layananNames']); ?>
                                     </div>
                                     <small style="color: var(--accent-hover); font-weight: 600;"><?php echo rupiah($r['totalPrice']); ?></small>

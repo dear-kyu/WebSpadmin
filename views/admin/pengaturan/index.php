@@ -10,17 +10,50 @@
 }
 </style>
 
-<?php if (!empty($success)): ?>
-    <div style="background-color: var(--success-bg); border: 1px solid var(--success); color: var(--success); padding: 15px; border-radius: var(--radius-sm); margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
-        <i class="fa-solid fa-circle-check"></i> <?php echo htmlspecialchars($success); ?>
-    </div>
-<?php endif; ?>
 
-<?php if (!empty($error)): ?>
-    <div style="background-color: var(--danger-bg); border: 1px solid var(--danger); color: var(--danger); padding: 15px; border-radius: var(--radius-sm); margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
-        <i class="fa-solid fa-circle-exclamation"></i> <?php echo htmlspecialchars($error); ?>
+
+<!-- ===== POPUP VALIDASI GLOBAL ===== -->
+<div id="pengaturanPopupOverlay" style="display:none; position:fixed; inset:0; z-index:1500; background:rgba(30,25,22,0.45); align-items:center; justify-content:center; padding:20px;">
+    <div style="width:min(420px,100%); background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); box-shadow:0 8px 32px rgba(0,0,0,0.18); overflow:hidden; animation: popupFadeIn 0.18s ease;">
+        <div style="padding:14px 18px; border-bottom:1px solid var(--border-color); display:flex; align-items:center; gap:10px;">
+            <span id="pengaturanPopupIcon" style="width:32px; height:32px; border-radius:8px; background:var(--danger-bg); color:var(--danger); display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <i class="fa-solid fa-circle-exclamation"></i>
+            </span>
+            <strong id="pengaturanPopupTitle" style="color:var(--primary); font-size:0.95rem;">Peringatan</strong>
+        </div>
+        <div style="padding:16px 18px; color:var(--text-dark); font-size:0.9rem; line-height:1.6;">
+            <p id="pengaturanPopupMsg" style="margin:0;"></p>
+        </div>
+        <div style="padding:0 18px 16px; display:flex; justify-content:flex-end;">
+            <button type="button" class="btn-spa btn-spa-accent" id="pengaturanPopupOkBtn" onclick="closePengaturanPopup()" style="padding:8px 20px;">OK</button>
+        </div>
     </div>
-<?php endif; ?>
+</div>
+
+<!-- Popup Konfirmasi Hapus -->
+<div id="pengaturanConfirmOverlay" style="display:none; position:fixed; inset:0; z-index:1500; background:rgba(30,25,22,0.45); align-items:center; justify-content:center; padding:20px;">
+    <div style="width:min(400px,100%); background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); box-shadow:0 8px 32px rgba(0,0,0,0.18); overflow:hidden;">
+        <div style="padding:14px 18px; border-bottom:1px solid var(--border-color); display:flex; align-items:center; gap:10px;">
+            <span style="width:32px; height:32px; border-radius:8px; background:var(--danger-bg); color:var(--danger); display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <i class="fa-solid fa-trash-can"></i>
+            </span>
+            <strong style="color:var(--primary); font-size:0.95rem;">Hapus Metode Transfer?</strong>
+        </div>
+        <div style="padding:16px 18px; color:var(--text-dark); font-size:0.9rem; line-height:1.6;">
+            <p style="margin:0;">Tindakan ini akan menghapus metode transfer secara permanen. Apakah Anda yakin?</p>
+        </div>
+        <div style="padding:0 18px 16px; display:flex; justify-content:flex-end; gap:8px;">
+            <button type="button" class="btn-spa btn-spa-outline" onclick="closePengaturanConfirm()">Batal</button>
+            <a id="pengaturanConfirmHref" href="#" class="btn-spa" style="border-color:var(--danger);background:var(--danger);color:#fff;">
+                <i class="fa-solid fa-trash-can"></i> Ya, Hapus
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes popupFadeIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
+</style>
 
 <div class="panel" style="margin-bottom: 30px;">
     <div class="panel-header">
@@ -30,20 +63,23 @@
     <div class="panel-body">
         <form action="admin.php?page=pengaturan&action=update_tampilan" method="POST">
             <div class="form-group">
-                <label for="featured_section_eyebrow">Teks Eyebrow Bagian Unggulan</label>
+                <label for="featured_section_eyebrow">Teks Eyebrow Bagian Unggulan <span class="req-star">*</span></label>
                 <input type="text" id="featured_section_eyebrow" name="featured_section_eyebrow" class="form-control" 
                        value="<?php echo htmlspecialchars($settings['featured_section_eyebrow'] ?? 'Our Best Value'); ?>" required autocomplete="off">
+                <span class="field-hint"><i class="fa-solid fa-circle-info"></i> Teks kecil di atas judul bagian unggulan, misal: "Our Best Value"</span>
             </div>
 
             <div class="form-group">
-                <label for="featured_section_title">Judul Utama Bagian Unggulan</label>
+                <label for="featured_section_title">Judul Utama Bagian Unggulan <span class="req-star">*</span></label>
                 <input type="text" id="featured_section_title" name="featured_section_title" class="form-control" 
                        value="<?php echo htmlspecialchars($settings['featured_section_title'] ?? 'Combo Packages'); ?>" required autocomplete="off">
+                <span class="field-hint"><i class="fa-solid fa-circle-info"></i> Judul besar yang tampil di halaman utama pelanggan</span>
             </div>
 
             <div class="form-group">
-                <label for="featured_section_subtitle">Sub-Judul Deskripsi Bagian Unggulan</label>
+                <label for="featured_section_subtitle">Sub-Judul Deskripsi Bagian Unggulan <span class="req-star">*</span></label>
                 <textarea id="featured_section_subtitle" name="featured_section_subtitle" class="form-control" style="min-height: 80px;" required><?php echo htmlspecialchars($settings['featured_section_subtitle'] ?? ''); ?></textarea>
+                <span class="field-hint"><i class="fa-solid fa-circle-info"></i> Deskripsi singkat di bawah judul bagian unggulan</span>
             </div>
 
             <div class="form-group" style="margin-bottom: 25px;">
@@ -78,7 +114,7 @@
     </div>
     
     <div class="panel-body">
-        <form action="admin.php?page=pengaturan&action=update_sesi" method="POST">
+        <form action="admin.php?page=pengaturan&action=update_sesi" method="POST" onsubmit="return validateSesiForm()">
             
             <div class="form-group" style="margin-bottom: 12px;">
                 <label style="font-weight: 600; font-size: 0.95rem; color: var(--primary); display: block; margin-bottom: 12px; letter-spacing: 0.5px;">Interval Reservasi</label>
@@ -214,12 +250,12 @@
                                         <td><strong style="font-family: monospace; color: var(--text-dark);"><?php echo htmlspecialchars($r['nomor_rekening']); ?></strong></td>
                                         <td><?php echo htmlspecialchars($r['atas_nama']); ?></td>
                                         <td style="text-align: center;">
-                                            <a href="admin.php?page=pengaturan&action=hapus_rekening&id=<?php echo (int) $r['id_rekening']; ?>"
+                                            <button type="button"
                                                class="btn-spa btn-spa-outline"
                                                style="border-color: var(--danger); color: var(--danger); padding: 6px 10px; font-size: 0.8rem;"
-                                               onclick="return confirm('Hapus metode transfer ini?');">
+                                               onclick="showHapusRekeningConfirm('admin.php?page=pengaturan&action=hapus_rekening&id=<?php echo (int) $r['id_rekening']; ?>')">
                                                 <i class="fa-solid fa-trash-can"></i>
-                                            </a>
+                                            </button>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -231,18 +267,27 @@
 
             <div class="settings-payment-form">
                 <h4 class="settings-subtitle">Tambah Metode Baru</h4>
-                <form action="admin.php?page=pengaturan&action=tambah_rekening" method="POST">
+                <form action="admin.php?page=pengaturan&action=tambah_rekening" method="POST" onsubmit="return validateRekeningForm()">
                     <div class="form-group">
-                        <label for="nama_bank">Nama Bank / E-Wallet</label>
-                        <input type="text" id="nama_bank" name="nama_bank" class="form-control" placeholder="Contoh: BCA, MANDIRI, GoPay" required>
+                        <label for="nama_bank">Nama Bank / E-Wallet <span class="req-star">*</span></label>
+                        <input type="text" id="nama_bank" name="nama_bank" class="form-control" placeholder="Contoh: BCA, Mandiri, GoPay" required
+                               oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '');"
+                               title="Nama bank/e-wallet hanya boleh berisi huruf dan spasi">
+                        <span class="field-hint"><i class="fa-solid fa-circle-info"></i> Hanya huruf dan spasi — contoh: BCA, GoPay, OVO</span>
                     </div>
                     <div class="form-group">
-                        <label for="nomor_rekening">Nomor Rekening / Nomor HP</label>
-                        <input type="text" id="nomor_rekening" name="nomor_rekening" class="form-control" placeholder="Contoh: 1234567890" required>
+                        <label for="nomor_rekening">Nomor Rekening / Nomor HP <span class="req-star">*</span></label>
+                        <input type="text" id="nomor_rekening" name="nomor_rekening" class="form-control" placeholder="Contoh: 1234567890" required
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                               title="Nomor rekening hanya boleh berisi angka">
+                        <span class="field-hint"><i class="fa-solid fa-circle-info"></i> Hanya angka — contoh: 0812345678</span>
                     </div>
                     <div class="form-group">
-                        <label for="atas_nama">Atas Nama</label>
-                        <input type="text" id="atas_nama" name="atas_nama" class="form-control" placeholder="Contoh: A.N. SPADMIN SPA" required>
+                        <label for="atas_nama">Atas Nama <span class="req-star">*</span></label>
+                        <input type="text" id="atas_nama" name="atas_nama" class="form-control" placeholder="Contoh: SPADMIN SPA" required
+                               oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '');"
+                               title="Atas nama hanya boleh berisi huruf dan spasi">
+                        <span class="field-hint"><i class="fa-solid fa-circle-info"></i> Hanya huruf dan spasi sesuai nama pemilik rekening</span>
                     </div>
                     <button type="submit" class="btn-spa btn-spa-accent" style="width: 100%; justify-content: center;">
                         <i class="fa-solid fa-plus"></i> Simpan Metode Transfer
@@ -348,4 +393,98 @@ document.addEventListener('DOMContentLoaded', function() {
 
     updateAllPreviews();
 });
+
+function showPengaturanPopup(title, message, focusId) {
+    document.getElementById('pengaturanPopupTitle').textContent = title || 'Peringatan';
+    document.getElementById('pengaturanPopupMsg').textContent = message;
+    var overlay = document.getElementById('pengaturanPopupOverlay');
+    overlay.style.display = 'flex';
+    document.getElementById('pengaturanPopupOkBtn').onclick = function() {
+        closePengaturanPopup();
+        if (focusId) {
+            var el = document.getElementById(focusId);
+            if (el) el.focus();
+        }
+    };
+}
+
+function closePengaturanPopup() {
+    document.getElementById('pengaturanPopupOverlay').style.display = 'none';
+}
+
+function showHapusRekeningConfirm(href) {
+    var rows = document.querySelectorAll('#metode-transfer table tbody tr');
+    if (rows.length <= 1 && !rows[0].innerText.includes('Belum ada metode transfer')) {
+        showPengaturanPopup('Peringatan', 'minimal harus terdapat 1 metode pembayaran yg aktif');
+        return;
+    }
+    document.getElementById('pengaturanConfirmHref').href = href;
+    document.getElementById('pengaturanConfirmOverlay').style.display = 'flex';
+}
+
+function closePengaturanConfirm() {
+    document.getElementById('pengaturanConfirmOverlay').style.display = 'none';
+}
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closePengaturanPopup();
+        closePengaturanConfirm();
+    }
+});
+document.addEventListener('click', function(e) {
+    if (e.target === document.getElementById('pengaturanPopupOverlay')) closePengaturanPopup();
+    if (e.target === document.getElementById('pengaturanConfirmOverlay')) closePengaturanConfirm();
+});
+
+function validateSesiForm() {
+    var pMulai   = document.getElementById('sesi_pagi_mulai').value;
+    var pSelesai = document.getElementById('sesi_pagi_selesai').value;
+    var sMulai   = document.getElementById('sesi_siang_mulai').value;
+    var sSelesai = document.getElementById('sesi_siang_selesai').value;
+    var soMulai  = document.getElementById('sesi_sore_mulai').value;
+    var soSelesai= document.getElementById('sesi_sore_selesai').value;
+
+    if (pMulai >= pSelesai) {
+        showPengaturanPopup('Konfigurasi Sesi Tidak Valid', 'Jam mulai Sesi Pagi harus lebih awal dari jam selesai. Contoh: mulai 09:00, selesai 11:30.', 'sesi_pagi_mulai');
+        return false;
+    }
+    if (sMulai >= sSelesai) {
+        showPengaturanPopup('Konfigurasi Sesi Tidak Valid', 'Jam mulai Sesi Siang harus lebih awal dari jam selesai. Contoh: mulai 12:00, selesai 16:30.', 'sesi_siang_mulai');
+        return false;
+    }
+    if (soMulai >= soSelesai) {
+        showPengaturanPopup('Konfigurasi Sesi Tidak Valid', 'Jam mulai Sesi Sore harus lebih awal dari jam selesai. Contoh: mulai 17:00, selesai 20:00.', 'sesi_sore_mulai');
+        return false;
+    }
+    if (sMulai < pSelesai) {
+        showPengaturanPopup('Jadwal Sesi Bertabrakan', 'Sesi Siang tidak boleh dimulai sebelum Sesi Pagi selesai. Sesi Pagi selesai pukul ' + pSelesai + ', maka Sesi Siang harus mulai pukul ' + pSelesai + ' atau lebih.', 'sesi_siang_mulai');
+        return false;
+    }
+    if (soMulai < sSelesai) {
+        showPengaturanPopup('Jadwal Sesi Bertabrakan', 'Sesi Sore tidak boleh dimulai sebelum Sesi Siang selesai. Sesi Siang selesai pukul ' + sSelesai + ', maka Sesi Sore harus mulai pukul ' + sSelesai + ' atau lebih.', 'sesi_sore_mulai');
+        return false;
+    }
+    return true;
+}
+
+function validateRekeningForm() {
+    var namaBank = document.getElementById('nama_bank').value.trim();
+    var noRek    = document.getElementById('nomor_rekening').value.trim();
+    var anRek    = document.getElementById('atas_nama').value.trim();
+
+    if (!namaBank || !/^[a-zA-Z\s]+$/.test(namaBank)) {
+        showPengaturanPopup('Format Nama Bank Tidak Valid', 'Nama Bank / E-Wallet hanya boleh berisi huruf dan spasi', 'nama_bank');
+        return false;
+    }
+    if (!noRek || !/^[0-9]+$/.test(noRek)) {
+        showPengaturanPopup('Format Nomor Rekening Tidak Valid', 'wajib diisi dengan nomor yg valid', 'nomor_rekening');
+        return false;
+    }
+    if (!anRek || !/^[a-zA-Z\s]+$/.test(anRek)) {
+        showPengaturanPopup('Format Atas Nama Tidak Valid', 'atas nama hanya boleh berisi huruf dan spasi', 'atas_nama');
+        return false;
+    }
+    return true;
+}
 </script>

@@ -91,8 +91,9 @@ class TransaksiController {
         $startDate = trim($_GET['start_date'] ?? date('Y-m-01'));
         $endDate   = trim($_GET['end_date']   ?? date('Y-m-d'));
 
-        $error = $_SESSION['errorMsg'] ?? null;
-        unset($_SESSION['errorMsg']);
+        $success = $_SESSION['successMsg'] ?? null;
+        $error   = $_SESSION['errorMsg']   ?? null;
+        unset($_SESSION['successMsg'], $_SESSION['errorMsg']);
 
         if (!$error && strtotime($startDate) > strtotime($endDate)) {
             $error = "Tanggal awal tidak boleh lebih besar dari tanggal akhir.";

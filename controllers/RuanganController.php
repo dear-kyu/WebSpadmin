@@ -43,6 +43,13 @@ class RuanganController {
                 exit();
             }
 
+            // Cek duplikasi nama ruangan
+            if ($this->ruanganModel->isRoomNameExists($namaRuangan, $id)) {
+                $_SESSION['errorMsg'] = "Nama ruangan '" . htmlspecialchars($namaRuangan) . "' sudah digunakan oleh ruangan lain!";
+                header("Location: admin.php?page=ruangan&action=edit&id=" . $id);
+                exit();
+            }
+
             if ($status === 'tidak aktif' && $this->ruanganModel->hasActiveBooking($id)) {
                 $_SESSION['errorMsg'] = "Ruangan tidak dapat dinonaktifkan karena sedang memiliki reservasi aktif!";
                 header("Location: admin.php?page=ruangan&action=edit&id=" . $id);

@@ -219,5 +219,45 @@
 
         document.addEventListener('DOMContentLoaded', initAdminListPagination);
     </script>
+
+    <?php if (!empty($success) || !empty($error)): ?>
+        <!-- Global Success/Error Notification Modal -->
+        <div id="globalNotificationOverlay" style="position: fixed; inset: 0; z-index: 9999; background: rgba(30, 25, 22, 0.45); display: flex; align-items: center; justify-content: center; padding: 20px;">
+            <div style="width: min(420px, 100%); background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); box-shadow: 0 8px 32px rgba(0,0,0,0.18); overflow: hidden; animation: popupFadeIn 0.18s ease;">
+                <div style="padding: 14px 18px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px;">
+                    <?php if (!empty($success)): ?>
+                        <span style="width: 32px; height: 32px; border-radius: 8px; background: var(--success-bg); color: var(--success); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </span>
+                        <strong style="color: var(--primary); font-size: 0.95rem;">Sukses</strong>
+                    <?php else: ?>
+                        <span style="width: 32px; height: 32px; border-radius: 8px; background: var(--danger-bg); color: var(--danger); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                        </span>
+                        <strong style="color: var(--primary); font-size: 0.95rem;">Peringatan</strong>
+                    <?php endif; ?>
+                </div>
+                <div style="padding: 16px 18px; color: var(--text-dark); font-size: 0.9rem; line-height: 1.6;">
+                    <p style="margin: 0;"><?php echo htmlspecialchars($success ?? $error); ?></p>
+                </div>
+                <div style="padding: 0 18px 16px; display: flex; justify-content: flex-end;">
+                    <button type="button" class="btn-spa btn-spa-accent" onclick="closeGlobalNotification()" style="padding: 8px 20px;">OK</button>
+                </div>
+            </div>
+        </div>
+        <script>
+        function closeGlobalNotification() {
+            var overlay = document.getElementById('globalNotificationOverlay');
+            if (overlay) overlay.style.display = 'none';
+        }
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeGlobalNotification();
+        });
+        document.addEventListener('click', function(e) {
+            var overlay = document.getElementById('globalNotificationOverlay');
+            if (overlay && e.target === overlay) closeGlobalNotification();
+        });
+        </script>
+    <?php endif; ?>
 </body>
 </html>
