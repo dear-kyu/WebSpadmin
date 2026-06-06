@@ -240,7 +240,7 @@
                         <div class="layanan-card-actions">
                             <a href="index.php?action=detail-layanan&id=<?= (int) $item['id'] ?>">Lihat Detail</a>
                             <?php if (isInCart($item['id'])): ?>
-                                <form method="POST" action="index.php?action=hapus-keranjang" onsubmit="return confirm('Apakah Anda yakin ingin menghapus layanan ini dari keranjang?');">
+                                <form method="POST" action="index.php?action=hapus-keranjang" data-cart-confirm data-confirm-title="Hapus layanan?" data-confirm-message="Layanan ini akan dihapus dari keranjang Anda." data-confirm-label="Hapus">
                                     <input type="hidden" name="layanan_id" value="<?= (int) $item['id'] ?>">
                                     <input type="hidden" name="redirect_to" value="index.php?action=layanan&keyword=<?= urlencode($keyword ?? '') ?>&kategori=<?= urlencode($kategori ?? '') ?>&durasi=<?= urlencode($durasi ?? '') ?>&sort=<?= urlencode($sort ?? '') ?>&page=<?= $page ?? 1 ?>">
                                     <button type="submit" class="layanan-card-cart is-added">

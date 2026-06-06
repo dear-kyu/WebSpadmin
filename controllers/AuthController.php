@@ -21,6 +21,9 @@ if ($aksi === 'login') {
 
 function prosesLogin() {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        if (isset($_GET['pesan_error'])) {
+            $pesanError = trim($_GET['pesan_error']);
+        }
         include __DIR__ . '/../views/auth/login.php';
         return;
     }
@@ -89,8 +92,9 @@ function prosesRegister() {
         return;
     }
 
-    if (strlen($password) < 6) {
-        $pesanError = "Password minimal 6 karakter.";
+    $pesanPassword = validasiPasswordPelanggan($password);
+    if ($pesanPassword !== null) {
+        $pesanError = $pesanPassword;
         include __DIR__ . '/../views/auth/register.php';
         return;
     }

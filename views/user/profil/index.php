@@ -262,6 +262,35 @@ $namaPelanggan = trim($user['nama'] ?? ($_SESSION['nama'] ?? 'Pelanggan'));
         pointer-events: none;
     }
 
+    .profile-input-wrap .password-toggle {
+        position: absolute;
+        top: 50%;
+        right: 1rem;
+        transform: translateY(-50%);
+        color: #d66881;
+        z-index: 2;
+    }
+
+    .profile-input-wrap input.has-password-toggle {
+        padding-right: 3.25rem;
+    }
+
+    .profile-input-wrap .password-toggle svg {
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .profile-field .password-requirements {
+        margin-left: 0;
+    }
+
+    .profile-field .password-requirements [data-rule="max"] {
+        display: none;
+    }
+
     .profile-field input {
         width: 100%;
         height: 52px;
@@ -462,8 +491,17 @@ $namaPelanggan = trim($user['nama'] ?? ($_SESSION['nama'] ?? 'Pelanggan'));
                             <span class="profile-input-icon" aria-hidden="true">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
                             </span>
-                            <input type="password" id="password_baru" name="password_baru" minlength="6" title="Password baru minimal 6 karakter" placeholder="Kosongkan jika tidak diganti">
+                            <input class="has-password-toggle" type="password" id="password_baru" name="password_baru" minlength="8" maxlength="255" title="Password baru minimal 8 karakter, memiliki 1 huruf besar, dan 1 karakter khusus" placeholder="Kosongkan jika tidak diganti" data-password-rules>
+                            <button class="password-toggle" type="button" data-toggle-password="password_baru" aria-label="Tampilkan password baru">
+                                <svg class="eye-open" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                <svg class="eye-closed" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18"></path><path d="M10.6 10.6A3 3 0 0 0 12 15a3 3 0 0 0 2.4-1.2"></path><path d="M7.1 7.1C3.8 8.9 2 12 2 12s3.5 6 10 6c1.7 0 3.2-.4 4.5-1"></path><path d="M14.1 5.2C19.2 6.1 22 12 22 12s-.8 1.4-2.3 2.8"></path></svg>
+                            </button>
                         </div>
+                        <ul class="password-requirements" data-password-requirements="password_baru">
+                            <li data-rule="min">Minimal 8 karakter</li>
+                            <li data-rule="uppercase">Minimal 1 huruf besar (A-Z)</li>
+                            <li data-rule="special">Minimal 1 karakter khusus</li>
+                        </ul>
                     </div>
                 </div>
 

@@ -488,6 +488,26 @@ function generasiSlotJam($mulai, $selesai, $interval) {
     return implode(',', $slots);
 }
 
+function validasiPasswordPelanggan($password, $label = 'Password') {
+    if (strlen($password) < 8) {
+        return $label . " minimal 8 karakter.";
+    }
+
+    if (strlen($password) > 255) {
+        return $label . " maksimal 255 karakter.";
+    }
+
+    if (!preg_match('/[A-Z]/', $password)) {
+        return $label . " harus memiliki minimal 1 huruf besar (A-Z).";
+    }
+
+    if (!preg_match('/[^A-Za-z0-9]/', $password)) {
+        return $label . " harus memiliki minimal 1 karakter khusus.";
+    }
+
+    return null;
+}
+
 function ambilLayanan($conn, $keyword = '', $kategori = '', $durasi = '', $sort = '') {
     $sql    = "SELECT id_layanan AS id, nama_layanan, kategori, media, harga, durasi, deskripsi, created_at FROM layanan WHERE 1=1";
     $params = [];
@@ -682,6 +702,10 @@ function simpanReservasi($conn, $userId, $layananIds, $genderTerapis, $tanggal, 
     $endTS = $startTS + ($totalDuration * 60);
     $endDateTime = date('Y-m-d H:i:s', $endTS);
 
+    if (!slotBeradaDalamJamOperasional($conn, $jam, $totalDuration)) {
+        throw new Exception("Jam kedatangan tidak tersedia karena durasi layanan melewati jam operasional spa.");
+    }
+
     // Ambil daftar terapis sibuk pada jadwal tersebut
     $occupiedTherapists = getOccupiedTherapistsForSlot($conn, $datetime, $endDateTime);
 
@@ -759,7 +783,7 @@ function simpanReservasi($conn, $userId, $layananIds, $genderTerapis, $tanggal, 
         SELECT DISTINCT r.id_ruangan 
         FROM reservasi r
         WHERE r.id_ruangan IS NOT NULL
-          AND r.status_reservation IN ('Diterima', 'Dikonfirmasi')
+          AND r.status_reservation IN ('Menunggu Pembayaran', 'Menunggu Validasi', 'Diterima', 'Dikonfirmasi')
           AND r.reservation_date < ?
           AND DATE_ADD(r.reservation_date, INTERVAL (
               SELECT SUM(l2.durasi) 
@@ -835,7 +859,7 @@ function getOccupiedTherapistsForSlot($conn, $datetime, $endDateTime) {
         FROM reservasi_detail rd
         JOIN reservasi r ON rd.id_reservasi = r.id_reservasi
         JOIN layanan l ON rd.id_layanan = l.id_layanan
-        WHERE r.status_reservation IN ('Diterima', 'Dikonfirmasi')
+        WHERE r.status_reservation IN ('Menunggu Pembayaran', 'Menunggu Validasi', 'Diterima', 'Dikonfirmasi')
           AND r.reservation_date < ?
           AND DATE_ADD(r.reservation_date, INTERVAL (
               SELECT SUM(l2.durasi) 
@@ -903,6 +927,10 @@ function cekKetersediaanSlot($conn, $layananIds, $genderTerapis, $tanggal, $jam)
     }
     if (empty($services)) return true;
 
+    if (!slotBeradaDalamJamOperasional($conn, $jam, $totalDuration)) {
+        return false;
+    }
+
     $datetime = $tanggal . ' ' . $jam . ':00';
     $startTS = strtotime($datetime);
     if (!$startTS) return false;
@@ -962,7 +990,7 @@ function cekKetersediaanSlot($conn, $layananIds, $genderTerapis, $tanggal, $jam)
         SELECT DISTINCT r.id_ruangan 
         FROM reservasi r
         WHERE r.id_ruangan IS NOT NULL
-          AND r.status_reservation IN ('Diterima', 'Dikonfirmasi')
+          AND r.status_reservation IN ('Menunggu Pembayaran', 'Menunggu Validasi', 'Diterima', 'Dikonfirmasi')
           AND r.reservation_date < ?
           AND DATE_ADD(r.reservation_date, INTERVAL (
               SELECT SUM(l2.durasi) 
@@ -990,6 +1018,34 @@ function cekKetersediaanSlot($conn, $layananIds, $genderTerapis, $tanggal, $jam)
     if (empty($availableRooms)) return false;
 
     return true;
+}
+
+function slotBeradaDalamJamOperasional($conn, $jam, $durasiMenit) {
+    $durasiMenit = (int)$durasiMenit;
+    if ($durasiMenit <= 0) return false;
+
+    $jamMulai = strtotime($jam);
+    if (!$jamMulai) return false;
+
+    $batasTutup = ambilBatasTutupSpa($conn);
+    $jamTutup = strtotime($batasTutup);
+    if (!$jamTutup) return false;
+
+    return ($jamMulai + ($durasiMenit * 60)) <= $jamTutup;
+}
+
+function ambilBatasTutupSpa($conn) {
+    $batas = [
+        ambilPengaturan($conn, 'sesi_pagi_selesai', '11:30'),
+        ambilPengaturan($conn, 'sesi_siang_selesai', '16:30'),
+        ambilPengaturan($conn, 'sesi_sore_selesai', '20:00'),
+    ];
+
+    usort($batas, function($a, $b) {
+        return strtotime($b) <=> strtotime($a);
+    });
+
+    return $batas[0] ?? '20:00';
 }
 
 function ambilDetailReservasi($conn, $reservasiId) {

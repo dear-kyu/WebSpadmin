@@ -10,7 +10,7 @@ function requireLogin() {
             header('Content-Type: application/json');
             echo json_encode([
                 'success' => false,
-                'message' => 'Silakan login terlebih dahulu untuk melanjutkan.',
+                'message' => 'Silahkan lakukan login dahulu',
                 'cart_count' => function_exists('cartCount') ? cartCount() : 0,
                 'login_required' => true,
             ]);
@@ -18,7 +18,7 @@ function requireLogin() {
         }
 
         $tujuan = $_SERVER['REQUEST_URI'] ?? 'index.php?action=home';
-        header("Location: index.php?action=login&next=" . urlencode($tujuan));
+        header("Location: index.php?action=login&next=" . urlencode($tujuan) . "&pesan_error=" . urlencode("Silahkan lakukan login dahulu"));
         exit;
     }
 }

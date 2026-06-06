@@ -993,18 +993,20 @@ $comboPackages = ambilLayanan($conn, '', $featuredCategory);
                         ?>
                         <div class="combo-pkg-card <?= $isActive ? 'active' : '' ?>" data-id="<?= $pkg['id'] ?>">
                             <!-- Image -->
-                            <div class="combo-card-img-wrapper">
+                            <a class="combo-card-img-wrapper combo-detail-target" href="index.php?action=detail-layanan&id=<?= (int)$pkg['id'] ?>" aria-label="Lihat detail <?= e($pkg['nama_layanan']) ?>">
                                 <img src="<?= e($imgSrc) ?>" alt="<?= e($pkg['nama_layanan']) ?>">
                                 <!-- Duration badge -->
                                 <span class="combo-duration-badge">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                                     <?= $durasiLabel ?>
                                 </span>
-                            </div>
+                            </a>
                             <!-- Body -->
                             <div class="combo-card-body">
                                 <span class="combo-card-category"><?= e($pkg['kategori'] ?? 'Layanan') ?></span>
-                                <h3 class="combo-card-name"><?= e($pkg['nama_layanan']) ?></h3>
+                                <h3 class="combo-card-name">
+                                    <a href="index.php?action=detail-layanan&id=<?= (int)$pkg['id'] ?>" class="combo-detail-name"><?= e($pkg['nama_layanan']) ?></a>
+                                </h3>
                                 <p class="combo-card-desc"><?= e($pkg['deskripsi']) ?></p>
                                 <div class="combo-card-footer">
                                     <span class="combo-card-price"><?= $formattedHarga ?></span>
@@ -1421,7 +1423,6 @@ foreach ($realReviews as $rev) {
                         <p class="testi-text"><?= e($review['isi_ulasan']) ?></p>
 
                         <div class="testi-service-tag">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                             <?= e($review['nama_layanan']) ?>
                         </div>
 
@@ -2061,10 +2062,11 @@ foreach ($realReviews as $rev) {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 0.375rem;
+    gap: 0.55rem;
     margin-top: auto;
     padding-top: 1rem;
     border-top: 1px solid rgba(63, 48, 40, 0.05);
+    flex-wrap: wrap;
 }
 
 .combo-card-price {
@@ -2072,6 +2074,7 @@ foreach ($realReviews as $rev) {
     font-size: 1rem;
     font-weight: 700;
     color: var(--wellness-green);
+    flex: 1 1 auto;
 }
 
 .combo-pkg-card.active .combo-card-price {
@@ -2106,6 +2109,19 @@ foreach ($realReviews as $rev) {
     text-decoration: none;
 }
 
+.combo-card-btn.is-added {
+    background: #e2dfd9;
+    color: #be123c;
+    border: 1px solid rgba(63, 48, 40, 0.05);
+}
+
+.combo-card-btn.is-added:hover {
+    background: #dc2626;
+    color: #fff;
+    border-color: #dc2626;
+    box-shadow: 0 8px 18px rgba(220, 38, 38, 0.22);
+}
+
 .combo-pkg-card:not(.active) .combo-card-btn {
     background: #e2dfd9;
     color: var(--wellness-green);
@@ -2116,6 +2132,18 @@ foreach ($realReviews as $rev) {
 .combo-pkg-card:not(.active) .combo-card-btn:hover {
     background: var(--wellness-green);
     color: #fff;
+}
+
+.combo-pkg-card:not(.active) .combo-card-btn.is-added {
+    color: #be123c;
+    background: #e2dfd9;
+    border: 1px solid rgba(63, 48, 40, 0.05);
+}
+
+.combo-pkg-card:not(.active) .combo-card-btn.is-added:hover {
+    color: #fff;
+    background: #dc2626;
+    border-color: #dc2626;
 }
 
 /* ---- Dots ---- */
@@ -2395,7 +2423,16 @@ foreach ($realReviews as $rev) {
     document.getElementById('comboPrev')?.addEventListener('click', () => goTo(current - 1));
     document.getElementById('comboNext')?.addEventListener('click', () => goTo(current + 1));
     dots.forEach((dot, i) => dot.addEventListener('click', () => goTo(i)));
-    cards.forEach((card, i) => card.addEventListener('click', () => goTo(i)));
+    track?.querySelectorAll('a[href*="detail-layanan"]').forEach((link) => {
+        link.addEventListener('click', (event) => {
+            event.stopPropagation();
+            window.location.href = link.href;
+        });
+    });
+    cards.forEach((card, i) => card.addEventListener('click', (event) => {
+        if (event.target.closest('a, button, form')) return;
+        goTo(i);
+    }));
     
     // Centering on initial load and resize
     updateSlider();
