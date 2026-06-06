@@ -37,6 +37,17 @@ class Ruangan extends BaseModel {
         ]);
     }
 
+    public function isRoomNameExists($namaRuangan, $excludeId = 0) {
+        $query = "SELECT COUNT(*) AS total FROM ruangan 
+                  WHERE LOWER(TRIM(nama_ruangan)) = LOWER(TRIM(:nama_ruangan)) 
+                    AND id_ruangan != :exclude_id";
+        $res = $this->fetchOne($query, [
+            ':nama_ruangan' => $namaRuangan,
+            ':exclude_id'   => $excludeId
+        ]);
+        return intval($res['total'] ?? 0) > 0;
+    }
+
     public function hasActiveBooking($idRuangan) {
         $query = "SELECT COUNT(*) AS total FROM reservasi 
                   WHERE id_ruangan = :id_ruangan 

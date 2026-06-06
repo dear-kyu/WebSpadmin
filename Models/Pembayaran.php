@@ -256,6 +256,12 @@ class Pembayaran extends BaseModel {
         ]);
     }
 
+    public function countRekening() {
+        $query = "SELECT COUNT(*) as total FROM rekening";
+        $result = $this->fetchOne($query);
+        return (int)($result['total'] ?? 0);
+    }
+
     public function deleteRekening($id) {
         $query = "DELETE FROM rekening WHERE id_rekening = :id";
         return $this->execute($query, [':id' => $id]);

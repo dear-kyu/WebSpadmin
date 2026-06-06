@@ -8,11 +8,7 @@ if (!function_exists('rupiah')) {
 }
 ?>
 
-<?php if (!empty($error)): ?>
-    <div style="background-color: var(--danger-bg); border: 1px solid var(--danger); color: var(--danger); padding: 15px; border-radius: var(--radius-sm); margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
-        <i class="fa-solid fa-circle-exclamation"></i> <?php echo htmlspecialchars($error); ?>
-    </div>
-<?php endif; ?>
+
 
 <div class="admin-section-tabs">
     <a href="admin.php?page=transaksi" class="admin-section-tab">
@@ -202,6 +198,7 @@ foreach ($layananList as $srv) {
                             <!-- Dropdown hasil -->
                             <div id="pelanggan_dropdown" style="display:none; position:absolute; top:100%; left:0; right:0; z-index:200; background: white; border: 1px solid var(--border-color); border-radius: var(--radius-sm); box-shadow: 0 4px 16px rgba(0,0,0,0.10); max-height: 220px; overflow-y:auto; margin-top: 2px;"></div>
                         </div>
+                        <div id="err_pelanggan_select" class="pos-error-msg" style="color: var(--danger); display: none; margin-top: 5px;"><i class="fa-solid fa-circle-exclamation" style="margin-right: 4px;"></i> kolom wajib di isi</div>
                         <div id="pelanggan_not_found" style="display:none; font-size:0.82rem; color: var(--danger); margin-top: 5px;">
                             <i class="fa-solid fa-circle-exclamation" style="margin-right: 4px;"></i> Pelanggan tidak ditemukan. Silakan daftarkan sebagai pelanggan baru di bawah.
                         </div>
@@ -216,11 +213,13 @@ foreach ($layananList as $srv) {
                         <div class="form-group">
                             <label for="new_nama">Nama Lengkap</label>
                             <input type="text" id="new_nama" name="new_nama" class="form-control" placeholder="Contoh: Sarah Angelina" autocomplete="off" oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '');">
+                            <div id="err_new_nama" class="pos-error-msg" style="color: var(--danger); display: none; margin-top: 5px;"><i class="fa-solid fa-circle-exclamation" style="margin-right: 4px;"></i> kolom wajib di isi</div>
                         </div>
                         <div class="form-group">
                             <label for="new_no_hp">Nomor Telepon / WA</label>
-                            <input type="text" id="new_no_hp" name="new_no_hp" class="form-control" placeholder="Contoh: 0812XXXXXXXX" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, ''); if(this.value.length > 0 && (this.value.length < 10 || this.value.length > 13)) { document.getElementById('err_new_no_hp').style.display = 'block'; } else { document.getElementById('err_new_no_hp').style.display = 'none'; }">
+                            <input type="text" id="new_no_hp" name="new_no_hp" class="form-control" placeholder="Contoh: 0812XXXXXXXX" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, ''); if(this.value.length > 0 && (this.value.length < 10 || this.value.length > 13)) { document.getElementById('err_new_no_hp').style.display = 'block'; } else { document.getElementById('err_new_no_hp').style.display = 'none'; }" onkeydown="if(event.key === 'Enter') { event.preventDefault(); event.stopPropagation(); var val = this.value.trim(); if(!val || val.length < 10 || val.length > 13) { document.getElementById('err_new_no_hp').style.display = 'block'; if(!val) { document.getElementById('err_new_no_hp_wajib').style.display = 'block'; } this.focus(); } else { var emailInput = document.getElementById('new_email'); if(emailInput) emailInput.focus(); } }">
                             <small id="err_new_no_hp" style="color: var(--danger); display: none; margin-top: 5px;">*Nomor telepon harus berupa angka dan berjumlah 10-13 digit.</small>
+                            <div id="err_new_no_hp_wajib" class="pos-error-msg" style="color: var(--danger); display: none; margin-top: 5px;"><i class="fa-solid fa-circle-exclamation" style="margin-right: 4px;"></i> kolom wajib di isi</div>
                         </div>
                         <div class="form-group">
                             <label for="new_email">Email (Opsional)</label>
@@ -255,6 +254,7 @@ foreach ($layananList as $srv) {
                             <!-- Dropdown hasil -->
                             <div id="terapis_dropdown" style="display:none; position:absolute; top:100%; left:0; right:0; z-index:200; background: white; border: 1px solid var(--border-color); border-radius: var(--radius-sm); box-shadow: 0 4px 16px rgba(0,0,0,0.10); max-height: 220px; overflow-y:auto; margin-top: 2px;"></div>
                         </div>
+                        <div id="err_terapis_select" class="pos-error-msg" style="color: var(--danger); display: none; margin-top: 5px;"><i class="fa-solid fa-circle-exclamation" style="margin-right: 4px;"></i> kolom wajib di isi</div>
                         <div id="terapis_not_found" style="display:none; font-size:0.82rem; color: var(--danger); margin-top: 5px;">
                             <i class="fa-solid fa-circle-exclamation" style="margin-right: 4px;"></i> Tidak ada terapis aktif yang cocok dengan pencarian.
                         </div>
@@ -278,6 +278,7 @@ foreach ($layananList as $srv) {
                                 <option value="<?php echo htmlspecialchars($metodeAktif); ?>"><?php echo htmlspecialchars($metodeAktif); ?></option>
                             <?php endforeach; ?>
                         </select>
+                        <div id="err_pos_bank" class="pos-error-msg" style="color: var(--danger); display: none; margin-top: 5px;"><i class="fa-solid fa-circle-exclamation" style="margin-right: 4px;"></i> kolom wajib di isi</div>
                     </div>
 
                     
@@ -285,6 +286,7 @@ foreach ($layananList as $srv) {
                         <div class="form-group">
                             <label for="nominal_bayar">Uang Bayar (Rp)</label>
                             <input type="number" id="nominal_bayar" name="nominal_bayar" class="form-control" placeholder="Jumlah uang..." min="0" onkeyup="calculateChange()" onchange="calculateChange()">
+                            <div id="err_nominal_bayar" class="pos-error-msg" style="color: var(--danger); display: none; margin-top: 5px;"><i class="fa-solid fa-circle-exclamation" style="margin-right: 4px;"></i> <span id="err_nominal_bayar_text">kolom wajib di isi</span></div>
                         </div>
                         <div class="form-group">
                             <label for="nominal_kembalian_display">Kembalian</label>
@@ -304,41 +306,6 @@ foreach ($layananList as $srv) {
 </div>
 
 <script>
-function validatePOSForm() {
-    const cartItems = JSON.parse(document.getElementById('posInputItems').value || '[]');
-    if (cartItems.length === 0) {
-        alert('Keranjang belanja kosong! Silakan pilih layanan SPA.');
-        return false;
-    }
-
-    const terapis = document.getElementById('terapis_select').value;
-    if (!terapis) {
-        alert('Pilih terapis terlebih dahulu untuk melakukan check-out POS!');
-        return false;
-    }
-
-    const pelanggan = document.getElementById('pelanggan_select').value;
-    if (!pelanggan) {
-        alert('Pelanggan harus dipilih atau didaftarkan!');
-        return false;
-    }
-
-    const metodeDisplay = document.getElementById('metode_pembayaran_display').value;
-    const metode = document.getElementById('metode_pembayaran').value;
-    if (metodeDisplay === 'Transfer' && !metode) {
-        alert('Pilih bank pembayaran terlebih dahulu!');
-        return false;
-    }
-    if (metode === 'Tunai') {
-        const total = window.currentPosTotal || 0;
-        const bayar = parseFloat(document.getElementById('nominal_bayar').value) || 0;
-        if (bayar < total) {
-            alert('Uang bayar kurang! Pembayaran tunai harus lebih besar atau sama dengan total bayar (' + 'Rp ' + new Intl.NumberFormat('id-ID', { minimumFractionDigits: 0 }).format(total) + ').');
-            return false;
-        }
-    }
-    return true;
-}
 
 function toggleNewCustomerForm(value) {
     const form = document.getElementById('new_customer_form');
@@ -680,36 +647,130 @@ document.addEventListener('click', function(e) {
 });
 
 // ===== VALIDASI FORM =====
+function hideAllPOSErrors() {
+    var ids = ['err_pelanggan_select','err_new_nama','err_new_no_hp_wajib','err_new_no_hp','err_terapis_select','err_pos_bank','err_nominal_bayar'];
+    ids.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+}
+
+function showPOSError(id, msg) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (msg) {
+        // cek apakah ada span text khusus
+        var textEl = document.getElementById(id + '_text');
+        if (textEl) textEl.textContent = msg;
+    }
+    el.style.display = 'block';
+}
+
 function validatePOSForm() {
-    // Override validasi untuk hidden input
-    var pelangganId = document.getElementById('pelanggan_select') ? document.getElementById('pelanggan_select').value : '';
-    var terapisId   = document.getElementById('terapis_select')   ? document.getElementById('terapis_select').value   : '';
-    var cartItems   = JSON.parse(document.getElementById('posInputItems').value || '[]');
+    hideAllPOSErrors();
 
-    if (cartItems.length === 0) { alert('Keranjang belanja kosong! Silakan pilih layanan SPA.'); return false; }
-    if (!terapisId)   { alert('Pilih terapis terlebih dahulu!'); return false; }
-    if (!pelangganId) { alert('Pilih atau daftarkan pelanggan terlebih dahulu!'); return false; }
-
-    var metodeDisplay = document.getElementById('metode_pembayaran_display').value;
-    var metode = document.getElementById('metode_pembayaran').value;
-    if (metodeDisplay === 'Transfer' && !metode) {
-        alert('Pilih bank pembayaran terlebih dahulu!');
+    var cartItems = JSON.parse(document.getElementById('posInputItems').value || '[]');
+    if (cartItems.length === 0) {
+        alert('Keranjang belanja kosong! Silakan pilih layanan SPA.');
+        var searchEl = document.getElementById('posSearchLayanan');
+        if (searchEl) searchEl.focus();
         return false;
     }
-    if (metode === 'Tunai') {
-        var total = window.currentPosTotal || 0;
-        var bayar = parseFloat(document.getElementById('nominal_bayar').value) || 0;
-        if (bayar < total) {
-            alert('Uang bayar kurang! Harus >= Rp ' + new Intl.NumberFormat('id-ID').format(total));
+
+    // Validasi pelanggan
+    var pelangganId = document.getElementById('pelanggan_select').value;
+    if (!pelangganId) {
+        showPOSError('err_pelanggan_select');
+        var searchPelanggan = document.getElementById('pelanggan_search_pos');
+        if (searchPelanggan) searchPelanggan.focus();
+        return false;
+    }
+
+    // Validasi field pelanggan baru
+    if (pelangganId === 'new') {
+        var newNama = document.getElementById('new_nama').value.trim();
+        if (!newNama) {
+            showPOSError('err_new_nama');
+            document.getElementById('new_nama').focus();
+            return false;
+        }
+        var newHp = document.getElementById('new_no_hp').value.trim();
+        if (!newHp) {
+            showPOSError('err_new_no_hp_wajib');
+            document.getElementById('new_no_hp').focus();
+            return false;
+        }
+        if (newHp.length < 10 || newHp.length > 13) {
+            document.getElementById('err_new_no_hp').style.display = 'block';
+            document.getElementById('new_no_hp').focus();
             return false;
         }
     }
+
+    // Validasi terapis
+    var terapisId = document.getElementById('terapis_select').value;
+    if (!terapisId) {
+        showPOSError('err_terapis_select');
+        var searchTerapis = document.getElementById('terapis_search_pos');
+        if (searchTerapis) searchTerapis.focus();
+        return false;
+    }
+
+    // Validasi metode pembayaran
+    var metodeDisplay = document.getElementById('metode_pembayaran_display').value;
+    var metode = document.getElementById('metode_pembayaran').value;
+
+    if (metodeDisplay === 'Transfer') {
+        var posBank = document.getElementById('pos_bank').value;
+        if (!posBank) {
+            showPOSError('err_pos_bank');
+            document.getElementById('pos_bank').focus();
+            return false;
+        }
+    }
+
+    if (metodeDisplay === 'Tunai') {
+        var total = window.currentPosTotal || 0;
+        var bayarVal = document.getElementById('nominal_bayar').value;
+        var bayar = parseFloat(bayarVal) || 0;
+        if (!bayarVal || bayarVal === '') {
+            showPOSError('err_nominal_bayar');
+            document.getElementById('nominal_bayar').focus();
+            return false;
+        }
+        if (bayar < total) {
+            showPOSError('err_nominal_bayar', 'Uang bayar kurang! Harus ≥ Rp ' + new Intl.NumberFormat('id-ID').format(total));
+            document.getElementById('nominal_bayar').focus();
+            return false;
+        }
+    }
+
     return true;
 }
 
 // Inisialisasi saat DOM siap
 document.addEventListener('DOMContentLoaded', function() {
     applyPOSFiltersAndRender();
+
+    // ===== ENTER KEY pada field No HP =====
+    var noHpInput = document.getElementById('new_no_hp');
+        noHpInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                e.stopPropagation();
+                var val = this.value.trim();
+                if (!val || val.length < 10 || val.length > 13) {
+                    document.getElementById('err_new_no_hp').style.display = 'block';
+                    if (!val) {
+                        document.getElementById('err_new_no_hp_wajib').style.display = 'block';
+                    }
+                    this.focus();
+                } else {
+                    var emailInput = document.getElementById('new_email');
+                    if (emailInput) emailInput.focus();
+                }
+            }
+        });
     // Keyboard navigation for Pelanggan
     var pelangganSearch = document.getElementById('pelanggan_search_pos');
     if (pelangganSearch) {

@@ -19,7 +19,7 @@ $bodyClass = 'auth-page register-auth-page';
             <?php if (isset($pesanError)): ?>
                 <div class="pesan-error"><?= e($pesanError) ?></div>
             <?php endif; ?>
-            <form method="POST" action="index.php?action=register" class="register-form">
+            <form method="POST" action="index.php?action=register" class="register-form" novalidate onsubmit="return validateRegisterForm(event)">
                 <div class="form-group register-field">
                     <label for="nama">Nama Lengkap</label>
                     <div class="register-input-wrap">
@@ -39,7 +39,7 @@ $bodyClass = 'auth-page register-auth-page';
                         <label for="telepon">Nomor Telepon</label>
                         <div class="register-input-wrap">
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 11.2 18.8a19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.08 4.18 2 2 0 0 1 4.06 2h3a2 2 0 0 1 2 1.72c.12.9.32 1.77.6 2.61a2 2 0 0 1-.45 2.11L8 9.64a16 16 0 0 0 6.36 6.36l1.2-1.2a2 2 0 0 1 2.11-.45c.84.28 1.71.48 2.61.6A2 2 0 0 1 22 16.92Z"></path></svg>
-                            <input type="tel" id="telepon" name="telepon" value="<?= e($_POST['telepon'] ?? '') ?>" required inputmode="numeric" pattern="[0-9]{8,13}" title="Nomor telepon harus berupa angka antara 8 sampai 13 digit" oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="0812345678">
+                            <input type="tel" id="telepon" name="telepon" value="<?= e($_POST['telepon'] ?? '') ?>" required inputmode="numeric" pattern="[0-9]{8,13}" title="Nomor telepon harus berupa angka antara 8 sampai 13 digit" oninput="this.value = this.value.replace(/[^0-9]/g, '');" placeholder="0812345678">
                         </div>
                     </div>
                 </div>
@@ -61,6 +61,36 @@ $bodyClass = 'auth-page register-auth-page';
                 </div>
                 <button type="submit" class="register-submit">Daftar Sekarang</button>
             </form>
+            <script>
+            function validateRegisterForm(e) {
+                var nama = document.getElementById('nama').value.trim();
+                var email = document.getElementById('email').value.trim();
+                var telepon = document.getElementById('telepon').value.trim();
+                var password = document.getElementById('password').value.trim();
+                var konfirmasi = document.getElementById('konfirmasi_password').value.trim();
+                
+                var errDiv = document.querySelector('.pesan-error');
+                if (!errDiv) {
+                    errDiv = document.createElement('div');
+                    errDiv.className = 'pesan-error';
+                    var form = document.querySelector('.register-form');
+                    form.parentNode.insertBefore(errDiv, form);
+                }
+                
+                if (!nama || !email || !telepon || !password || !konfirmasi) {
+                    e.preventDefault();
+                    errDiv.textContent = "nama,email dan password wajib di isi";
+                    errDiv.style.display = 'block';
+                    if (!nama) document.getElementById('nama').focus();
+                    else if (!email) document.getElementById('email').focus();
+                    else if (!telepon) document.getElementById('telepon').focus();
+                    else if (!password) document.getElementById('password').focus();
+                    else document.getElementById('konfirmasi_password').focus();
+                    return false;
+                }
+                return true;
+            }
+            </script>
             <p class="teks-auth">Sudah punya akun? <a href="index.php?action=login">Login di sini</a></p>
             </div>
 

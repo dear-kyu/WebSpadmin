@@ -33,7 +33,7 @@ $bodyClass = 'auth-page login-auth-page';
             <?php if (isset($pesanError)): ?>
                 <div class="pesan-error"><?= e($pesanError) ?></div>
             <?php endif; ?>
-            <form method="POST" action="index.php?action=login<?= isset($_GET['next']) ? '&next=' . urlencode($_GET['next']) : '' ?>" class="login-form">
+            <form method="POST" action="index.php?action=login<?= isset($_GET['next']) ? '&next=' . urlencode($_GET['next']) : '' ?>" class="login-form" novalidate onsubmit="return validateLoginForm(event)">
                 <div class="form-group register-field">
                     <label for="email">Email</label>
                     <div class="register-input-wrap">
@@ -50,6 +50,30 @@ $bodyClass = 'auth-page login-auth-page';
                 </div>
                 <button type="submit" class="register-submit">Masuk</button>
             </form>
+            <script>
+            function validateLoginForm(e) {
+                var email = document.getElementById('email').value.trim();
+                var password = document.getElementById('password').value.trim();
+                
+                var errDiv = document.querySelector('.pesan-error');
+                if (!errDiv) {
+                    errDiv = document.createElement('div');
+                    errDiv.className = 'pesan-error';
+                    var form = document.querySelector('.login-form');
+                    form.parentNode.insertBefore(errDiv, form);
+                }
+                
+                if (!email || !password) {
+                    e.preventDefault();
+                    errDiv.textContent = "nama,email dan password wajib di isi";
+                    errDiv.style.display = 'block';
+                    if (!email) document.getElementById('email').focus();
+                    else document.getElementById('password').focus();
+                    return false;
+                }
+                return true;
+            }
+            </script>
             <p class="teks-auth">Belum punya akun? <a href="index.php?action=register">Daftar pelanggan</a></p>
             </div>
         </div>
