@@ -3,8 +3,11 @@
 define('MENIT_KADALUWARSA_RESERVASI', 30);
 
 function pastikanStrukturUser($conn) {
-    buatTabelJikaPerlu($conn);
-    isiDataAwal($conn);
+    $cek = $conn->query("SHOW TABLES LIKE 'users'");
+    if ($cek->num_rows === 0) {
+        buatTabelJikaPerlu($conn);
+        isiDataAwal($conn);
+    }
 }
 
 function buatTabelJikaPerlu($conn) {
@@ -248,12 +251,11 @@ function isiDataAwal($conn) {
 }
 
 function seedLayanan($conn) {
-    $sudahAda = $conn->query("SELECT COUNT(*) AS total FROM layanan WHERE nama_layanan = 'Pijat Belakang' AND kategori = 'Pijat'")->fetch_assoc()['total'] ?? 0;
-    if ((int)$sudahAda > 0) return;
-
-    $conn->query("SET FOREIGN_KEY_CHECKS = 0");
-    $conn->query("TRUNCATE TABLE layanan");
-    $conn->query("SET FOREIGN_KEY_CHECKS = 1");
+    $cek = $conn->query("SELECT COUNT(*) AS total FROM layanan");
+    $total = $cek->fetch_assoc()['total'] ?? 0;
+    if ((int)$total > 0) {
+        return;
+    }
 
     $dataLayanan = [
         ['Pijat Belakang',                'Pijat',                    'Pijat fokus pada area punggung, pinggang, dan belakang betis kaki untuk membantu meredakan pegal dan melancarkan peredaran darah.',   45,  79000],
@@ -590,8 +592,8 @@ function buildQueryReservasi() {
         TIME_FORMAT(TIME(r.reservation_date), '%H:%i') AS jam,
         '' AS catatan,
         r.status_reservation AS status_reservasi,
-        COALESCE(p.status_payment, 'Belum Upload') AS status_pembayaran,
-        p.payment_proof AS nama_file,
+        COALESCE((SELECT p.status_payment FROM payment p WHERE p.id_reservasi = r.id_reservasi ORDER BY p.id_payment DESC LIMIT 1), 'Belum Upload') AS status_pembayaran,
+        (SELECT p.payment_proof FROM payment p WHERE p.id_reservasi = r.id_reservasi ORDER BY p.id_payment DESC LIMIT 1) AS nama_file,
         r.total_price AS harga,
         r.total_price AS total_price,
         r.created_at,
@@ -602,8 +604,7 @@ function buildQueryReservasi() {
         (SELECT GROUP_CONCAT(t2.nama_terapis SEPARATOR ', ') FROM reservasi_detail rd2 JOIN terapis t2 ON rd2.id_terapis = t2.id_terapis WHERE rd2.id_reservasi = r.id_reservasi) AS nama_terapis
         FROM reservasi r
         JOIN reservasi_detail rd ON rd.id_reservasi = r.id_reservasi
-        JOIN layanan l ON l.id_layanan = rd.id_layanan
-        LEFT JOIN payment p ON p.id_reservasi = r.id_reservasi";
+        JOIN layanan l ON l.id_layanan = rd.id_layanan";
 }
 
 function ambilReservasiPelanggan($conn, $userId) {
@@ -1303,18 +1304,6 @@ function seedUlasan($conn) {
 }
 
 function hanguskanReservasiKadaluwarsa($conn) {
-    $conn->query("UPDATE payment p
-                  JOIN reservasi r ON p.id_reservasi = r.id_reservasi
-                  SET p.status_payment = 'rejected'
-                  WHERE r.status_reservation = 'Menunggu Validasi'
-                  AND p.status_payment IN ('Menunggu Validasi', 'pending', 'Menunggu Pembayaran')
-                  AND r.reservation_date < NOW()");
-
-    $conn->query("UPDATE reservasi
-                  SET status_reservation = 'Dibatalkan'
-                  WHERE status_reservation = 'Menunggu Validasi'
-                  AND reservation_date < NOW()");
-
     $conn->query("UPDATE reservasi r
                   LEFT JOIN payment p ON p.id_reservasi = r.id_reservasi
                   SET r.status_reservation = 'Hangus'

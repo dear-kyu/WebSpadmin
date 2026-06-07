@@ -69,12 +69,22 @@ $bodyClass = 'auth-page login-auth-page';
                 
                 if (!email || !password) {
                     e.preventDefault();
-                    errDiv.textContent = "nama,email dan password wajib di isi";
+                    errDiv.textContent = "Email dan password wajib diisi";
                     errDiv.style.display = 'block';
                     if (!email) document.getElementById('email').focus();
                     else document.getElementById('password').focus();
                     return false;
                 }
+                
+                var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailPattern.test(email)) {
+                    e.preventDefault();
+                    errDiv.textContent = "Format email tidak valid (harus mengandung '@' dan domain).";
+                    errDiv.style.display = 'block';
+                    document.getElementById('email').focus();
+                    return false;
+                }
+                
                 return true;
             }
             </script>

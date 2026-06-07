@@ -7,19 +7,19 @@ class Terapis extends BaseModel {
     public function getAll() {
         $query = "SELECT t.*,
                          (SELECT COUNT(*) 
-                          FROM Reservasi r 
-                          JOIN Reservasi_detail rd_check ON r.id_reservasi = rd_check.id_reservasi
+                          FROM reservasi r 
+                          JOIN reservasi_detail rd_check ON r.id_reservasi = rd_check.id_reservasi
                           WHERE rd_check.id_terapis = t.id_terapis 
                             AND r.status_reservation IN ('Diterima', 'Dikonfirmasi') 
                             AND NOW() >= r.reservation_date 
                             AND NOW() < DATE_ADD(r.reservation_date, INTERVAL (
                                 SELECT COALESCE(SUM(l.durasi), 90) 
-                                FROM Reservasi_detail rd 
-                                JOIN Layanan l ON rd.id_layanan = l.id_layanan 
+                                FROM reservasi_detail rd 
+                                JOIN layanan l ON rd.id_layanan = l.id_layanan 
                                 WHERE rd.id_reservasi = r.id_reservasi
                             ) MINUTE)
                          ) AS is_busy
-                  FROM Terapis t
+                  FROM terapis t
                   ORDER BY t.id_terapis DESC";
 
         return $this->fetchAll($query);
@@ -28,20 +28,20 @@ class Terapis extends BaseModel {
     public function getActive() {
         $query = "SELECT t.*,
                          (SELECT COUNT(*) 
-                          FROM Reservasi r 
-                          JOIN Reservasi_detail rd_check ON r.id_reservasi = rd_check.id_reservasi
+                          FROM reservasi r 
+                          JOIN reservasi_detail rd_check ON r.id_reservasi = rd_check.id_reservasi
                           WHERE rd_check.id_terapis = t.id_terapis 
                             AND r.status_reservation IN ('Diterima', 'Dikonfirmasi') 
                             AND NOW() >= r.reservation_date 
                             AND NOW() < DATE_ADD(r.reservation_date, INTERVAL (
                                 SELECT COALESCE(SUM(l.durasi), 90) 
-                                FROM Reservasi_detail rd 
-                                JOIN Layanan l ON rd.id_layanan = l.id_layanan 
+                                FROM reservasi_detail rd 
+                                JOIN layanan l ON rd.id_layanan = l.id_layanan 
                                 WHERE rd.id_reservasi = r.id_reservasi
                             ) MINUTE)
                          ) AS is_busy
-                  FROM Terapis t 
-                  WHERE t.status = 'Aktif' 
+                  FROM terapis t 
+                  WHERE t.status = 'aktif' 
                   ORDER BY t.nama_terapis ASC";
 
         return $this->fetchAll($query);
@@ -49,7 +49,7 @@ class Terapis extends BaseModel {
 
     public function getById($idTerapis) {
         $query = "SELECT * 
-                  FROM Terapis 
+                  FROM terapis 
                   WHERE id_terapis = :id_terapis 
                   LIMIT 1";
 
@@ -57,7 +57,7 @@ class Terapis extends BaseModel {
     }
 
     public function create($namaTerapis, $spesialisasi, $noTelp, $status, $jenisKelamin = 'Perempuan') {
-        $query = "INSERT INTO Terapis (nama_terapis, spesialisasi, no_telp, status, jenis_kelamin) 
+        $query = "INSERT INTO terapis (nama_terapis, spesialisasi, no_telp, status, jenis_kelamin) 
                   VALUES (:nama_terapis, :spesialisasi, :no_telp, :status, :jenis_kelamin)";
 
         return $this->execute($query, [
@@ -70,7 +70,7 @@ class Terapis extends BaseModel {
     }
 
     public function update($idTerapis, $namaTerapis, $spesialisasi, $noTelp, $status, $jenisKelamin = 'Perempuan') {
-        $query = "UPDATE Terapis 
+        $query = "UPDATE terapis 
                   SET nama_terapis = :nama_terapis, 
                       spesialisasi = :spesialisasi, 
                       no_telp = :no_telp, 
@@ -89,7 +89,7 @@ class Terapis extends BaseModel {
     }
 
     public function delete($idTerapis) {
-        $query = "DELETE FROM Terapis 
+        $query = "DELETE FROM terapis 
                   WHERE id_terapis = :id_terapis";
 
         return $this->execute($query, [':id_terapis' => $idTerapis]);

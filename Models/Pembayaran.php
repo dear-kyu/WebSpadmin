@@ -43,7 +43,7 @@ class Pembayaran extends BaseModel {
         if (empty($columns)) {
             $this->execute("ALTER TABLE payment ADD COLUMN nominal_payment INT NOT NULL DEFAULT 0 AFTER jenis_pembayaran");
             $this->execute("UPDATE payment p
-                            JOIN Reservasi r ON p.id_reservasi = r.id_reservasi
+                            JOIN reservasi r ON p.id_reservasi = r.id_reservasi
                             SET p.nominal_payment = CASE
                                 WHEN r.reservation_type = 'online' THEN r.total_price * 0.5
                                 ELSE r.total_price
@@ -51,7 +51,7 @@ class Pembayaran extends BaseModel {
                             WHERE p.nominal_payment = 0");
             $this->execute("UPDATE transaksi t
                             JOIN payment p ON t.id_reservasi = p.id_reservasi
-                            JOIN Reservasi r ON t.id_reservasi = r.id_reservasi
+                            JOIN reservasi r ON t.id_reservasi = r.id_reservasi
                             SET t.total_payment = p.nominal_payment,
                                 t.uang_bayar = p.nominal_payment,
                                 t.kembalian = 0
@@ -79,10 +79,10 @@ class Pembayaran extends BaseModel {
                          p.nama AS namaPelanggan,
                          GROUP_CONCAT(l.nama_layanan SEPARATOR ', ') AS layananNames
                   FROM payment pb
-                  JOIN Reservasi r ON pb.id_reservasi = r.id_reservasi
+                  JOIN reservasi r ON pb.id_reservasi = r.id_reservasi
                   JOIN users p ON r.id_user = p.id_user
-                  LEFT JOIN Reservasi_detail rd ON r.id_reservasi = rd.id_reservasi
-                  LEFT JOIN Layanan l ON rd.id_layanan = l.id_layanan";
+                  LEFT JOIN reservasi_detail rd ON r.id_reservasi = rd.id_reservasi
+                  LEFT JOIN layanan l ON rd.id_layanan = l.id_layanan";
 
         $params = [];
         if ($status !== null) {
@@ -97,7 +97,7 @@ class Pembayaran extends BaseModel {
 
     public function sinkronkanPembayaranSelesai() {
         $this->execute("UPDATE payment pb
-                        JOIN Reservasi r ON pb.id_reservasi = r.id_reservasi
+                        JOIN reservasi r ON pb.id_reservasi = r.id_reservasi
                         SET pb.status_payment = 'Lunas',
                             pb.nominal_payment = r.total_price,
                             pb.payment_method = TRIM(REPLACE(REPLACE(pb.payment_method, ' (DP Hangus)', ''), ' (Pembayaran Hangus)', ''))
@@ -105,7 +105,7 @@ class Pembayaran extends BaseModel {
                           AND pb.status_payment IN ('verified', 'Diterima', 'DP Hangus', 'Pembayaran Hangus')");
 
         return $this->execute("UPDATE transaksi t
-                               JOIN Reservasi r ON t.id_reservasi = r.id_reservasi
+                               JOIN reservasi r ON t.id_reservasi = r.id_reservasi
                                JOIN payment pb ON pb.id_reservasi = r.id_reservasi
                                SET t.total_payment = r.total_price,
                                    t.uang_bayar = r.total_price,
@@ -121,10 +121,10 @@ class Pembayaran extends BaseModel {
                          uAdmin.nama AS namaVerifier,
                          GROUP_CONCAT(l.nama_layanan SEPARATOR ', ') AS layananNames
                   FROM payment pb
-                  JOIN Reservasi r ON pb.id_reservasi = r.id_reservasi
+                  JOIN reservasi r ON pb.id_reservasi = r.id_reservasi
                   JOIN users p ON r.id_user = p.id_user
-                  LEFT JOIN Reservasi_detail rd ON r.id_reservasi = rd.id_reservasi
-                  LEFT JOIN Layanan l ON rd.id_layanan = l.id_layanan
+                  LEFT JOIN reservasi_detail rd ON r.id_reservasi = rd.id_reservasi
+                  LEFT JOIN layanan l ON rd.id_layanan = l.id_layanan
                   LEFT JOIN users uAdmin ON pb.verified_by = uAdmin.id_user
                   WHERE pb.id_payment = :id_payment 
                   GROUP BY pb.id_payment 

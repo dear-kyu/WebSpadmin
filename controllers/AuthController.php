@@ -32,7 +32,13 @@ function prosesLogin() {
     $password = trim($_POST['password'] ?? '');
 
     if (empty($email) || empty($password)) {
-        $pesanError = "nama,email dan password wajib di isi";
+        $pesanError = "Email dan password wajib diisi";
+        include __DIR__ . '/../views/auth/login.php';
+        return;
+    }
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $pesanError = "Format email tidak valid (harus mengandung '@' dan domain).";
         include __DIR__ . '/../views/auth/login.php';
         return;
     }
@@ -47,7 +53,12 @@ function prosesLogin() {
         $_SESSION['email']   = $dataUser['email'];
         $_SESSION['role']    = $dataUser['role'];
 
-        header("Location: index.php?action=home");
+        $next = $_GET['next'] ?? $_POST['next'] ?? '';
+        if (!empty($next) && (strpos($next, 'index.php') === 0 || strpos($next, '/') === 0) && strpos($next, '//') !== 0) {
+            header("Location: " . $next);
+        } else {
+            header("Location: index.php?action=home");
+        }
         exit;
 
     } else {
@@ -69,7 +80,7 @@ function prosesRegister() {
     $konfirmasiPassword = trim($_POST['konfirmasi_password'] ?? '');
 
     if ($nama === '' || $email === '' || $telepon === '' || $password === '' || $konfirmasiPassword === '') {
-        $pesanError = "nama,email dan password wajib di isi";
+        $pesanError = "Semua data wajib diisi";
         include __DIR__ . '/../views/auth/register.php';
         return;
     }
