@@ -31,7 +31,7 @@ class Pelanggan extends BaseModel {
             ':nama' => $nama,
             ':email' => $email,
             ':no_telepon' => $noTelepon,
-            ':password' => $password
+            ':password' => password_hash($password, PASSWORD_DEFAULT)
         ]);
 
         if ($result) {
@@ -47,6 +47,15 @@ class Pelanggan extends BaseModel {
             ':rating' => $rating,
             ':id_user' => $idUser
         ]);
+    }
+
+    public function isEmailExists($email) {
+        if (empty($email)) {
+            return false;
+        }
+        $query = "SELECT COUNT(*) AS total FROM users WHERE email = :email";
+        $row = $this->fetchOne($query, [':email' => $email]);
+        return (int)($row['total'] ?? 0) > 0;
     }
 }
 ?>

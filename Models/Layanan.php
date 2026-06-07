@@ -6,7 +6,7 @@ class Layanan extends BaseModel {
 
     public function getAll() {
         $query = "SELECT * 
-                  FROM Layanan 
+                  FROM layanan 
                   ORDER BY id_layanan DESC";
 
         return $this->fetchAll($query);
@@ -14,7 +14,7 @@ class Layanan extends BaseModel {
 
     public function getById($idLayanan) {
         $query = "SELECT * 
-                  FROM Layanan 
+                  FROM layanan 
                   WHERE id_layanan = :id_layanan 
                   LIMIT 1";
 
@@ -22,7 +22,7 @@ class Layanan extends BaseModel {
     }
 
     public function create($namaLayanan, $kategori, $durasi, $harga, $deskripsi, $media = null) {
-        $query = "INSERT INTO Layanan (nama_layanan, kategori, durasi, harga, deskripsi, media)
+        $query = "INSERT INTO layanan (nama_layanan, kategori, durasi, harga, deskripsi, media)
                   VALUES (:nama_layanan, :kategori, :durasi, :harga, :deskripsi, :media)";
 
         return $this->execute($query, [
@@ -36,7 +36,7 @@ class Layanan extends BaseModel {
     }
 
     public function update($idLayanan, $namaLayanan, $kategori, $durasi, $harga, $deskripsi, $media = null) {
-        $query = "UPDATE Layanan
+        $query = "UPDATE layanan
                   SET nama_layanan = :nama_layanan,
                       kategori     = :kategori,
                       durasi       = :durasi,
@@ -57,7 +57,7 @@ class Layanan extends BaseModel {
     }
 
     public function delete($idLayanan) {
-        $query = "DELETE FROM Layanan 
+        $query = "DELETE FROM layanan 
                   WHERE id_layanan = :id_layanan";
 
         return $this->execute($query, [':id_layanan' => $idLayanan]);

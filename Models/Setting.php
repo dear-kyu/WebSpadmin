@@ -23,10 +23,11 @@ class Setting extends BaseModel {
     public function save($key, $value) {
         $query = "INSERT INTO pengaturan_halaman (kunci, nilai) 
                   VALUES (:kunci, :nilai) 
-                  ON DUPLICATE KEY UPDATE nilai = :nilai";
+                  ON DUPLICATE KEY UPDATE nilai = :nilai_update";
         return $this->execute($query, [
             ':kunci' => $key,
-            ':nilai' => $value
+            ':nilai' => $value,
+            ':nilai_update' => $value
         ]);
     }
 }

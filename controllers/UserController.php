@@ -152,14 +152,19 @@ function tampilDetailLayanan() {
             return false;
         }
 
+        $serviceCategory = strtolower((string) ($layanan['kategori'] ?? ''));
         $serviceName = strtolower((string) ($layanan['nama_layanan'] ?? ''));
         $serviceName = preg_replace('/\s*\([^)]*\)\s*/', ' ', $serviceName);
         $serviceName = preg_replace('/\s+/', ' ', trim($serviceName));
 
+        if ($serviceCategory === 'tambahan' || $serviceCategory === 'tambahan bekam' || strpos($serviceName, 'extra time') !== false || strpos($serviceName, 'aromaterapi') !== false) {
+            return true;
+        }
+
         $specialization = strtolower((string) ($item['spesialisasi'] ?? ''));
         $specialization = preg_replace('/\s+/', ' ', trim($specialization));
 
-        return $serviceName !== '' && strpos($specialization, $serviceName) !== false;
+        return $serviceName !== '' && (strpos($specialization, $serviceName) !== false || strpos($serviceName, $specialization) !== false);
     }));
     $ulasan  = ambilUlasanLayanan($conn, $id);
     include __DIR__ . '/../views/user/layanan/detail.php';

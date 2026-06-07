@@ -92,7 +92,7 @@ $bodyClass = 'auth-page register-auth-page';
                 
                 if (!nama || !email || !telepon || !password || !konfirmasi) {
                     e.preventDefault();
-                    errDiv.textContent = "nama,email dan password wajib di isi";
+                    errDiv.textContent = "Semua data wajib diisi";
                     errDiv.style.display = 'block';
                     if (!nama) document.getElementById('nama').focus();
                     else if (!email) document.getElementById('email').focus();

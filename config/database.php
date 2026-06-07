@@ -20,20 +20,24 @@ if (!$conn->select_db(DB_NAME)) {
 $conn->query("SET time_zone = '+07:00'");
 
 class Database {
+    private static $pdo = null;
+
     public function getConnection() {
-        try {
-            $pdo = new PDO(
-                "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
-                DB_USER,
-                DB_PASS
-            );
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-            $pdo->exec("SET time_zone = '+07:00'");
-            return $pdo;
-        } catch (PDOException $e) {
-            die("Database connection error: " . $e->getMessage());
+        if (self::$pdo === null) {
+            try {
+                self::$pdo = new PDO(
+                    "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
+                    DB_USER,
+                    DB_PASS
+                );
+                self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                self::$pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+                self::$pdo->exec("SET time_zone = '+07:00'");
+            } catch (PDOException $e) {
+                die("Database connection error: " . $e->getMessage());
+            }
         }
+        return self::$pdo;
     }
 }
 ?>

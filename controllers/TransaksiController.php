@@ -238,6 +238,12 @@ class TransaksiController {
 
         $email = $email !== '' ? $email : null;
 
+        if ($email !== null && $this->pelangganModel->isEmailExists($email)) {
+            $_SESSION['errorMsg'] = "Email pelanggan baru sudah terdaftar!";
+            header("Location: admin.php?page=transaksi&action=create");
+            exit();
+        }
+
         return $this->pelangganModel->create($nama, $email, $noHp);
     }
 

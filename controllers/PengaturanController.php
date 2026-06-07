@@ -43,21 +43,18 @@ class PengaturanController {
                 exit();
             }
 
-            // Validasi nama bank hanya boleh huruf dan spasi
             if (!preg_match('/^[a-zA-Z\s]+$/', $namaBank)) {
                 $_SESSION['errorMsg'] = "Nama Bank / E-Wallet hanya boleh berisi huruf dan spasi";
                 header('Location: admin.php?page=pengaturan#metode-transfer');
                 exit();
             }
 
-            // Validasi nomor rekening hanya boleh angka
             if (!preg_match('/^[0-9]+$/', $nomorRekening)) {
                 $_SESSION['errorMsg'] = "wajib diisi dengan nomor yg valid";
                 header('Location: admin.php?page=pengaturan#metode-transfer');
                 exit();
             }
 
-            // Validasi atas nama hanya boleh huruf dan spasi
             if (!preg_match('/^[a-zA-Z\s]+$/', $atasNama)) {
                 $_SESSION['errorMsg'] = "atas nama hanya boleh berisi huruf dan spasi";
                 header('Location: admin.php?page=pengaturan#metode-transfer');
@@ -78,7 +75,6 @@ class PengaturanController {
     public function hapusRekening() {
         $id = intval($_GET['id'] ?? 0);
 
-        // Cegah penghapusan jika hanya tersisa 1 rekening
         $totalRekening = $this->pembayaranModel->countRekening();
         if ($totalRekening <= 1) {
             $_SESSION['errorMsg'] = "minimal harus terdapat 1 metode pembayaran yg aktif";
@@ -139,7 +135,6 @@ class PengaturanController {
                 exit();
             }
 
-            // Validasi: jam mulai harus lebih awal dari jam selesai
             if ($pMulai >= $pSelesai) {
                 $_SESSION['errorMsg'] = "Konfigurasi tidak valid: Jam mulai Sesi Pagi harus lebih awal dari jam selesai.";
                 header('Location: admin.php?page=pengaturan');
@@ -156,7 +151,6 @@ class PengaturanController {
                 exit();
             }
 
-            // Validasi: sesi tidak boleh tumpang tindih (overlap)
             if ($sMulai < $pSelesai) {
                 $_SESSION['errorMsg'] = "Konfigurasi tidak valid: Sesi Siang harus dimulai setelah Sesi Pagi selesai ({$pSelesai}).";
                 header('Location: admin.php?page=pengaturan');

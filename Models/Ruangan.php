@@ -45,7 +45,7 @@ class Ruangan extends BaseModel {
             ':nama_ruangan' => $namaRuangan,
             ':exclude_id'   => $excludeId
         ]);
-        return intval($res['total'] ?? 0) > 0;
+        return $res ? (intval($res['total']) > 0) : false;
     }
 
     public function hasActiveBooking($idRuangan) {
@@ -53,7 +53,7 @@ class Ruangan extends BaseModel {
                   WHERE id_ruangan = :id_ruangan 
                     AND status_reservation IN ('Diterima', 'Dikonfirmasi')";
         $res = $this->fetchOne($query, [':id_ruangan' => $idRuangan]);
-        return intval($res['total'] ?? 0) > 0;
+        return $res ? (intval($res['total']) > 0) : false;
     }
 }
 ?>

@@ -6,19 +6,18 @@ class Transaksi extends BaseModel {
 
     public function getAll() {
         $query = "SELECT t.*, r.reservation_date, r.reservation_type, r.id_user,
-                         (SELECT MIN(rd3.id_terapis) FROM Reservasi_detail rd3 WHERE rd3.id_reservasi = r.id_reservasi) AS id_terapis,
+                         (SELECT MIN(rd3.id_terapis) FROM reservasi_detail rd3 WHERE rd3.id_reservasi = r.id_reservasi) AS id_terapis,
                          p.nama AS namaPelanggan, p.no_telepon AS noHpPelanggan,
-                         (SELECT GROUP_CONCAT(DISTINCT t2.nama_terapis SEPARATOR ', ') FROM Reservasi_detail rd2 JOIN Terapis t2 ON rd2.id_terapis = t2.id_terapis WHERE rd2.id_reservasi = r.id_reservasi) AS namaTerapis,
-                         pay.payment_method, pay.status_payment,
-                         uAdmin.nama AS namaAdmin,
+                         (SELECT GROUP_CONCAT(DISTINCT t2.nama_terapis SEPARATOR ', ') FROM reservasi_detail rd2 JOIN terapis t2 ON rd2.id_terapis = t2.id_terapis WHERE rd2.id_reservasi = r.id_reservasi) AS namaTerapis,
+                         (SELECT pay.payment_method FROM payment pay WHERE pay.id_reservasi = r.id_reservasi ORDER BY pay.id_payment DESC LIMIT 1) AS payment_method,
+                         (SELECT pay.status_payment FROM payment pay WHERE pay.id_reservasi = r.id_reservasi ORDER BY pay.id_payment DESC LIMIT 1) AS status_payment,
+                         (SELECT uAdmin.nama FROM payment pay JOIN users uAdmin ON pay.verified_by = uAdmin.id_user WHERE pay.id_reservasi = r.id_reservasi ORDER BY pay.id_payment DESC LIMIT 1) AS namaAdmin,
                          GROUP_CONCAT(DISTINCT l.nama_layanan SEPARATOR ', ') AS layananNames
                    FROM transaksi t
-                   LEFT JOIN Reservasi r ON t.id_reservasi = r.id_reservasi
+                   LEFT JOIN reservasi r ON t.id_reservasi = r.id_reservasi
                    LEFT JOIN users p ON r.id_user = p.id_user
-                   LEFT JOIN payment pay ON r.id_reservasi = pay.id_reservasi
-                   LEFT JOIN users uAdmin ON pay.verified_by = uAdmin.id_user
                    LEFT JOIN detail_transaksi dt ON t.id_transaksi = dt.id_transaksi
-                   LEFT JOIN Layanan l ON dt.id_layanan = l.id_layanan
+                   LEFT JOIN layanan l ON dt.id_layanan = l.id_layanan
                    GROUP BY t.id_transaksi
                    ORDER BY t.id_transaksi DESC";
 
@@ -27,16 +26,15 @@ class Transaksi extends BaseModel {
 
     public function getById($idTransaksi) {
         $query = "SELECT t.*, r.reservation_date, r.reservation_type, r.id_user,
-                         (SELECT MIN(rd3.id_terapis) FROM Reservasi_detail rd3 WHERE rd3.id_reservasi = r.id_reservasi) AS id_terapis,
+                         (SELECT MIN(rd3.id_terapis) FROM reservasi_detail rd3 WHERE rd3.id_reservasi = r.id_reservasi) AS id_terapis,
                          p.nama AS namaPelanggan, p.no_telepon AS noHpPelanggan, p.email AS emailPelanggan, p.rating_pelanggan,
-                         (SELECT GROUP_CONCAT(DISTINCT t2.nama_terapis SEPARATOR ', ') FROM Reservasi_detail rd2 JOIN Terapis t2 ON rd2.id_terapis = t2.id_terapis WHERE rd2.id_reservasi = r.id_reservasi) AS namaTerapis,
-                         pay.payment_method, pay.status_payment,
-                         uAdmin.nama AS namaAdmin
+                         (SELECT GROUP_CONCAT(DISTINCT t2.nama_terapis SEPARATOR ', ') FROM reservasi_detail rd2 JOIN terapis t2 ON rd2.id_terapis = t2.id_terapis WHERE rd2.id_reservasi = r.id_reservasi) AS namaTerapis,
+                         (SELECT pay.payment_method FROM payment pay WHERE pay.id_reservasi = r.id_reservasi ORDER BY pay.id_payment DESC LIMIT 1) AS payment_method,
+                         (SELECT pay.status_payment FROM payment pay WHERE pay.id_reservasi = r.id_reservasi ORDER BY pay.id_payment DESC LIMIT 1) AS status_payment,
+                         (SELECT uAdmin.nama FROM payment pay JOIN users uAdmin ON pay.verified_by = uAdmin.id_user WHERE pay.id_reservasi = r.id_reservasi ORDER BY pay.id_payment DESC LIMIT 1) AS namaAdmin
                   FROM transaksi t
-                  LEFT JOIN Reservasi r ON t.id_reservasi = r.id_reservasi
+                  LEFT JOIN reservasi r ON t.id_reservasi = r.id_reservasi
                   LEFT JOIN users p ON r.id_user = p.id_user
-                  LEFT JOIN payment pay ON r.id_reservasi = pay.id_reservasi
-                  LEFT JOIN users uAdmin ON pay.verified_by = uAdmin.id_user
                   WHERE t.id_transaksi = :id_transaksi 
                   LIMIT 1";
 
@@ -52,7 +50,7 @@ class Transaksi extends BaseModel {
     public function getDetails($idTransaksi) {
         $query = "SELECT dt.*, l.nama_layanan, l.harga, l.durasi 
                   FROM detail_transaksi dt
-                  JOIN Layanan l ON dt.id_layanan = l.id_layanan
+                  JOIN layanan l ON dt.id_layanan = l.id_layanan
                   WHERE dt.id_transaksi = :id_transaksi";
 
         return $this->fetchAll($query, [':id_transaksi' => $idTransaksi]);
@@ -128,15 +126,17 @@ class Transaksi extends BaseModel {
     public function generateLaporan($startDate, $endDate) {
         $query = "SELECT t.*, r.reservation_date, r.reservation_type, r.status_reservation, r.total_price,
                          p.nama AS namaPelanggan,
-                         (SELECT GROUP_CONCAT(DISTINCT t2.nama_terapis SEPARATOR ', ') FROM Reservasi_detail rd2 JOIN Terapis t2 ON rd2.id_terapis = t2.id_terapis WHERE rd2.id_reservasi = r.id_reservasi) AS namaTerapis,
-                         pay.payment_method, pay.status_payment, pay.jenis_pembayaran, pay.pelunasan_method,
+                         (SELECT GROUP_CONCAT(DISTINCT t2.nama_terapis SEPARATOR ', ') FROM reservasi_detail rd2 JOIN terapis t2 ON rd2.id_terapis = t2.id_terapis WHERE rd2.id_reservasi = r.id_reservasi) AS namaTerapis,
+                         (SELECT pay.payment_method FROM payment pay WHERE pay.id_reservasi = r.id_reservasi ORDER BY pay.id_payment DESC LIMIT 1) AS payment_method,
+                         (SELECT pay.status_payment FROM payment pay WHERE pay.id_reservasi = r.id_reservasi ORDER BY pay.id_payment DESC LIMIT 1) AS status_payment,
+                         (SELECT pay.jenis_pembayaran FROM payment pay WHERE pay.id_reservasi = r.id_reservasi ORDER BY pay.id_payment DESC LIMIT 1) AS jenis_pembayaran,
+                         (SELECT pay.pelunasan_method FROM payment pay WHERE pay.id_reservasi = r.id_reservasi ORDER BY pay.id_payment DESC LIMIT 1) AS pelunasan_method,
                          GROUP_CONCAT(DISTINCT l.nama_layanan SEPARATOR ', ') AS layananNames
                   FROM transaksi t
-                  LEFT JOIN Reservasi r ON t.id_reservasi = r.id_reservasi
+                  LEFT JOIN reservasi r ON t.id_reservasi = r.id_reservasi
                   LEFT JOIN users p ON r.id_user = p.id_user
-                  LEFT JOIN payment pay ON r.id_reservasi = pay.id_reservasi
                   LEFT JOIN detail_transaksi dt ON t.id_transaksi = dt.id_transaksi
-                  LEFT JOIN Layanan l ON dt.id_layanan = l.id_layanan
+                  LEFT JOIN layanan l ON dt.id_layanan = l.id_layanan
                   WHERE DATE(t.transaction_date) BETWEEN :startDate AND :endDate
                   GROUP BY t.id_transaksi
                   ORDER BY t.transaction_date ASC";
@@ -149,12 +149,12 @@ class Transaksi extends BaseModel {
 
     public function getStatistik() {
         $revenue      = $this->fetchOne("SELECT SUM(total_payment) AS total FROM transaksi");
-        $reservations = $this->fetchOne("SELECT COUNT(*) AS total FROM Reservasi");
+        $reservations = $this->fetchOne("SELECT COUNT(*) AS total FROM reservasi");
         $transactions = $this->fetchOne("SELECT COUNT(*) AS total FROM transaksi");
         $customers    = $this->fetchOne("SELECT COUNT(*) AS total FROM users WHERE role = 'pelanggan'");
-        $resToday     = $this->fetchOne("SELECT COUNT(*) AS total FROM Reservasi WHERE DATE(reservation_date) = CURRENT_DATE()");
-        $services     = $this->fetchOne("SELECT COUNT(*) AS total FROM Layanan");
-        $therapists   = $this->fetchOne("SELECT COUNT(*) AS total FROM Terapis WHERE status = 'Aktif'");
+        $resToday     = $this->fetchOne("SELECT COUNT(*) AS total FROM reservasi WHERE DATE(reservation_date) = CURRENT_DATE()");
+        $services     = $this->fetchOne("SELECT COUNT(*) AS total FROM layanan");
+        $therapists   = $this->fetchOne("SELECT COUNT(*) AS total FROM terapis WHERE status = 'aktif'");
 
         $chartData = $this->fetchAll(
             "SELECT DATE(transaction_date) AS tanggal, SUM(total_payment) AS total 

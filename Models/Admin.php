@@ -13,7 +13,7 @@ class Admin extends BaseModel {
 
         $admin = $this->fetchOne($query, [':email' => $email]);
 
-        if ($admin && (password_verify($password, $admin['password']) || $password === $admin['password'])) {
+        if ($admin && password_verify($password, $admin['password'])) {
             return $admin;
         }
 

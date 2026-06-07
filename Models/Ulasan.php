@@ -8,7 +8,7 @@ class Ulasan extends BaseModel {
         $query = "SELECT u.*, p.nama AS namaPelanggan, p.email AS emailPelanggan, l.nama_layanan 
                   FROM ulasan u
                   JOIN users p ON u.user_id = p.id_user
-                  JOIN Layanan l ON u.id_layanan = l.id_layanan
+                  JOIN layanan l ON u.id_layanan = l.id_layanan
                   ORDER BY u.id_ulasan DESC";
 
         return $this->fetchAll($query);
@@ -23,15 +23,16 @@ class Ulasan extends BaseModel {
         return $this->fetchOne($query, [':id_ulasan' => $idUlasan]);
     }
 
-    public function create($userId, $idLayanan, $rating, $ulasan) {
-        $query = "INSERT INTO ulasan (user_id, id_layanan, rating, ulasan) 
-                  VALUES (:user_id, :id_layanan, :rating, :ulasan)";
+    public function create($userId, $idLayanan, $rating, $ulasan, $reservasiId = null) {
+        $query = "INSERT INTO ulasan (user_id, id_layanan, rating, ulasan, reservasi_id) 
+                  VALUES (:user_id, :id_layanan, :rating, :ulasan, :reservasi_id)";
 
         return $this->execute($query, [
             ':user_id'   => $userId,
             ':id_layanan' => $idLayanan,
             ':rating'   => $rating,
-            ':ulasan'   => $ulasan
+            ':ulasan'   => $ulasan,
+            ':reservasi_id' => $reservasiId
         ]);
     }
 

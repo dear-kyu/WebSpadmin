@@ -6,14 +6,7 @@ class Reservasi extends BaseModel {
     private const MENIT_KADALUWARSA_RESERVASI = 30;
 
     public function batalkanPendingLewatJamBooking() {
-        $this->execute("UPDATE payment p
-                        JOIN Reservasi r ON p.id_reservasi = r.id_reservasi
-                        SET p.status_payment = 'rejected'
-                        WHERE r.status_reservation = 'Menunggu Validasi'
-                          AND p.status_payment IN ('Menunggu Validasi', 'pending', 'Menunggu Pembayaran')
-                          AND r.reservation_date < NOW()");
-
-        $this->execute("UPDATE Reservasi r
+        return $this->execute("UPDATE reservasi r
                         LEFT JOIN payment p ON p.id_reservasi = r.id_reservasi
                         SET r.status_reservation = 'Dibatalkan'
                         WHERE r.status_reservation = 'Menunggu Pembayaran'
@@ -22,26 +15,19 @@ class Reservasi extends BaseModel {
                               r.created_at < DATE_SUB(NOW(), INTERVAL " . self::MENIT_KADALUWARSA_RESERVASI . " MINUTE)
                               OR r.reservation_date < NOW()
                           )");
-
-        $query = "UPDATE Reservasi
-                  SET status_reservation = 'Dibatalkan'
-                  WHERE status_reservation = 'Menunggu Validasi'
-                    AND reservation_date < NOW()";
-
-        return $this->execute($query);
     }
 
     public function getAll($status = null) {
         $this->batalkanPendingLewatJamBooking();
         $query = "SELECT r.*, p.nama AS namaPelanggan, p.no_telepon AS noHpPelanggan, 
-                         (SELECT GROUP_CONCAT(DISTINCT t2.nama_terapis SEPARATOR ', ') FROM Reservasi_detail rd2 JOIN Terapis t2 ON rd2.id_terapis = t2.id_terapis WHERE rd2.id_reservasi = r.id_reservasi) AS namaTerapis,
+                         (SELECT GROUP_CONCAT(DISTINCT t2.nama_terapis SEPARATOR ', ') FROM reservasi_detail rd2 JOIN terapis t2 ON rd2.id_terapis = t2.id_terapis WHERE rd2.id_reservasi = r.id_reservasi) AS namaTerapis,
                          rg.nama_ruangan AS namaRuangan,
                          GROUP_CONCAT(DISTINCT l.nama_layanan SEPARATOR ', ') AS layananNames
-                  FROM Reservasi r
+                  FROM reservasi r
                   JOIN users p ON r.id_user = p.id_user
                   LEFT JOIN ruangan rg ON r.id_ruangan = rg.id_ruangan
-                  LEFT JOIN Reservasi_detail rd ON r.id_reservasi = rd.id_reservasi
-                  LEFT JOIN Layanan l ON rd.id_layanan = l.id_layanan";
+                  LEFT JOIN reservasi_detail rd ON r.id_reservasi = rd.id_reservasi
+                  LEFT JOIN layanan l ON rd.id_layanan = l.id_layanan";
 
         $params = [];
         if ($status !== null) {
@@ -68,10 +54,10 @@ class Reservasi extends BaseModel {
         $this->batalkanPendingLewatJamBooking();
 
         $query = "SELECT r.*, p.nama AS namaPelanggan, p.no_telepon AS noHpPelanggan, p.email AS emailPelanggan, p.rating_pelanggan,
-                         (SELECT GROUP_CONCAT(DISTINCT t2.nama_terapis SEPARATOR ', ') FROM Reservasi_detail rd2 JOIN Terapis t2 ON rd2.id_terapis = t2.id_terapis WHERE rd2.id_reservasi = r.id_reservasi) AS namaTerapis,
-                         (SELECT MIN(rd3.id_terapis) FROM Reservasi_detail rd3 WHERE rd3.id_reservasi = r.id_reservasi) AS id_terapis,
+                         (SELECT GROUP_CONCAT(DISTINCT t2.nama_terapis SEPARATOR ', ') FROM reservasi_detail rd2 JOIN terapis t2 ON rd2.id_terapis = t2.id_terapis WHERE rd2.id_reservasi = r.id_reservasi) AS namaTerapis,
+                         (SELECT MIN(rd3.id_terapis) FROM reservasi_detail rd3 WHERE rd3.id_reservasi = r.id_reservasi) AS id_terapis,
                          rg.nama_ruangan AS namaRuangan
-                  FROM Reservasi r
+                  FROM reservasi r
                   JOIN users p ON r.id_user = p.id_user
                   LEFT JOIN ruangan rg ON r.id_ruangan = rg.id_ruangan
                   WHERE r.id_reservasi = :id_reservasi 
@@ -88,16 +74,16 @@ class Reservasi extends BaseModel {
 
     public function getDetails($idReservasi) {
         $query = "SELECT rd.*, l.nama_layanan, l.kategori, l.harga, l.durasi, t.nama_terapis
-                  FROM Reservasi_detail rd
-                  JOIN Layanan l ON rd.id_layanan = l.id_layanan
-                  LEFT JOIN Terapis t ON rd.id_terapis = t.id_terapis
+                  FROM reservasi_detail rd
+                  JOIN layanan l ON rd.id_layanan = l.id_layanan
+                  LEFT JOIN terapis t ON rd.id_terapis = t.id_terapis
                   WHERE rd.id_reservasi = :id_reservasi";
 
         return $this->fetchAll($query, [':id_reservasi' => $idReservasi]);
     }
 
     public function updateStatus($idReservasi, $status) {
-        $query = "UPDATE Reservasi 
+        $query = "UPDATE reservasi 
                   SET status_reservation = :status 
                   WHERE id_reservasi = :id_reservasi";
 
@@ -108,7 +94,7 @@ class Reservasi extends BaseModel {
     }
 
     public function assignTerapis($idReservasi, $idTerapis) {
-        $query = "UPDATE Reservasi_detail 
+        $query = "UPDATE reservasi_detail 
                   SET id_terapis = :id_terapis 
                   WHERE id_reservasi = :id_reservasi";
 
@@ -119,7 +105,7 @@ class Reservasi extends BaseModel {
     }
 
     public function assignTerapisToDetail($idDetail, $idTerapis) {
-        $query = "UPDATE Reservasi_detail 
+        $query = "UPDATE reservasi_detail 
                   SET id_terapis = :id_terapis 
                   WHERE id_detail = :id_detail";
 
@@ -135,8 +121,8 @@ class Reservasi extends BaseModel {
         }
 
         $query = "SELECT COUNT(*) AS total 
-                  FROM Reservasi_detail rd
-                  JOIN Reservasi r ON rd.id_reservasi = r.id_reservasi
+                  FROM reservasi_detail rd
+                  JOIN reservasi r ON rd.id_reservasi = r.id_reservasi
                   WHERE rd.id_terapis = :id_terapis 
                     AND r.status_reservation IN ('Diterima', 'Dikonfirmasi')
                     AND ABS(TIMESTAMPDIFF(MINUTE, r.reservation_date, :reservation_date)) < 60";
@@ -159,7 +145,7 @@ class Reservasi extends BaseModel {
         try {
             $this->db->beginTransaction();
 
-            $query = "INSERT INTO Reservasi (id_user, id_ruangan, reservation_date, reservation_type, status_reservation, total_price) 
+            $query = "INSERT INTO reservasi (id_user, id_ruangan, reservation_date, reservation_type, status_reservation, total_price) 
                       VALUES (:id_user, NULL, :reservation_date, :reservation_type, :status_reservation, :total_price)";
 
             $stmt = $this->db->prepare($query);
@@ -172,7 +158,7 @@ class Reservasi extends BaseModel {
 
             $idReservasi = $this->db->lastInsertId();
 
-            $detailQuery = "INSERT INTO Reservasi_detail (id_reservasi, id_layanan, id_terapis, qty, subtotal) 
+            $detailQuery = "INSERT INTO reservasi_detail (id_reservasi, id_layanan, id_terapis, qty, subtotal) 
                             VALUES (:id_reservasi, :id_layanan, :id_terapis, :qty, :subtotal)";
             $detailStmt = $this->db->prepare($detailQuery);
 
@@ -202,7 +188,7 @@ class Reservasi extends BaseModel {
     public function getCounts() {
         $this->batalkanPendingLewatJamBooking();
 
-        $query = "SELECT status_reservation, COUNT(*) AS cnt FROM Reservasi GROUP BY status_reservation";
+        $query = "SELECT status_reservation, COUNT(*) AS cnt FROM reservasi GROUP BY status_reservation";
         $rows = $this->fetchAll($query);
         
         $counts = [
@@ -240,27 +226,27 @@ class Reservasi extends BaseModel {
 
         $query = "SELECT r.*,
                          (SELECT COUNT(*) 
-                          FROM Reservasi res 
+                          FROM reservasi res 
                           WHERE res.id_ruangan = r.id_ruangan 
                             AND res.status_reservation IN ('Diterima', 'Dikonfirmasi') 
                             AND NOW() >= res.reservation_date 
                             AND NOW() < DATE_ADD(res.reservation_date, INTERVAL (
                                 SELECT COALESCE(SUM(l.durasi), 90) 
-                                FROM Reservasi_detail rd 
-                                JOIN Layanan l ON rd.id_layanan = l.id_layanan 
+                                FROM reservasi_detail rd 
+                                JOIN layanan l ON rd.id_layanan = l.id_layanan 
                                 WHERE rd.id_reservasi = res.id_reservasi
                             ) MINUTE)
                          ) AS is_busy,
                          (SELECT p.nama 
-                          FROM Reservasi res
+                          FROM reservasi res
                           JOIN users p ON res.id_user = p.id_user
                           WHERE res.id_ruangan = r.id_ruangan 
                             AND res.status_reservation IN ('Diterima', 'Dikonfirmasi') 
                             AND NOW() >= res.reservation_date 
                             AND NOW() < DATE_ADD(res.reservation_date, INTERVAL (
                                 SELECT COALESCE(SUM(l.durasi), 90) 
-                                FROM Reservasi_detail rd 
-                                JOIN Layanan l ON rd.id_layanan = l.id_layanan 
+                                FROM reservasi_detail rd 
+                                JOIN layanan l ON rd.id_layanan = l.id_layanan 
                                 WHERE rd.id_reservasi = res.id_reservasi
                             ) MINUTE)
                           LIMIT 1

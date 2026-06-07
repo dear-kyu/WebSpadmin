@@ -5,7 +5,7 @@ require_once __DIR__ . '/../models/Layanan.php';
 class LayananController {
 
     private const UPLOAD_DIR      = __DIR__ . '/../uploads/layanan/';
-    private const MAX_UKURAN_FILE = 5 * 1024 * 1024; // 5 MB
+    private const MAX_UKURAN_FILE = 5 * 1024 * 1024;
     private const EKSTENSI_VALID  = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
 
     private $layananModel;
