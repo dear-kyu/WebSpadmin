@@ -1,4 +1,3 @@
-
 <?php
 
 if (!function_exists('rupiah')) {
@@ -33,39 +32,23 @@ if (!function_exists('metodeLaporan')) {
 $rataRataTx = $totalTxCount > 0 ? ($totalPendapatan / $totalTxCount) : 0;
 ?>
 
-
-
 <style>
-.laporan-stat-badge-container {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: var(--bg-light, #f8faf9);
-    border: 1px solid var(--border-color);
-    padding: 6px 14px;
-    border-radius: var(--radius-sm);
-    flex-wrap: wrap;
+.top-navbar {
+    display: none !important;
 }
-.laporan-stat-badge-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+.custom-table th {
+    padding: 14px 16px !important;
 }
-.laporan-stat-badge-label {
-    font-size: 0.76rem;
-    color: var(--text-muted);
-    font-weight: 500;
-    text-transform: capitalize;
+.custom-table td {
+    padding: 16px 16px !important;
 }
-.laporan-stat-badge-value {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--primary);
+.custom-table th:first-child,
+.custom-table td:first-child {
+    padding-left: 24px !important;
 }
-.laporan-badge-divider {
-    width: 1px;
-    height: 14px;
-    background-color: var(--border-color);
+.custom-table th:last-child,
+.custom-table td:last-child {
+    padding-right: 24px !important;
 }
 @media (max-width: 900px) {
     .laporan-top-layout-row {
@@ -73,60 +56,151 @@ $rataRataTx = $totalTxCount > 0 ? ($totalPendapatan / $totalTxCount) : 0;
         align-items: stretch !important;
         gap: 12px !important;
     }
-    .laporan-stat-badge-container {
-        justify-content: space-between;
-        width: 100%;
-    }
+}
+/* Redesigned Laporan Stats Cards */
+.laporan-card {
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 24px 28px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 4px 20px rgba(164, 140, 113, 0.05);
+    transition: all 0.3s ease;
+}
+.laporan-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(164, 140, 113, 0.12);
+    border-color: #dcc8b1;
+}
+.laporan-card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 14px;
+    background-color: #faf2ea;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+.laporan-card:hover .laporan-card-icon {
+    background-color: #f3ebe1;
+}
+.laporan-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.laporan-card-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #8c827a;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin: 0;
+}
+.laporan-card-value {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #352f2c;
+    margin: 0;
+    line-height: 1.2;
+    font-family: var(--font-heading), sans-serif;
+}
+.laporan-card-trend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+    color: #8c827a;
+    font-weight: 500;
+    margin-top: 2px;
+}
+.laporan-card-trend-arrow {
+    color: #2b8a3e;
+    font-weight: 700;
+    font-size: 0.95rem;
 }
 </style>
 
-<!-- ===== COMPACT HEADER & FILTER BAR ===== -->
-<div class="panel" style="margin-bottom: 20px;">
-    <div class="panel-body" style="padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;" class="laporan-top-layout-row">
+<!-- ===== TRANSPARENT HEADER BAR ===== -->
+<div class="laporan-header-row" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px;">
+    <div>
+        <h1 style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 800; color: var(--primary); margin: 0; line-height: 1.2;">Laporan</h1>
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin: 6px 0 0 0;">Ringkasan transaksi dan pendapatan SPA</p>
+    </div>
+    <div style="background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 16px; display: flex; align-items: center; gap: 8px; box-shadow: var(--shadow-sm); font-size: 0.88rem; color: var(--text-muted); font-weight: 600;">
+        <i class="fa-regular fa-calendar-days" style="color: var(--accent);"></i>
+        <span><?php echo date('d M Y'); ?></span>
+    </div>
+</div>
+
+<!-- ===== STATS CARDS ===== -->
+<div class="stats-grid">
+    <!-- Card 1: Total Pendapatan -->
+    <div class="laporan-card">
+        <div class="laporan-card-icon">
+            <div style="width: 26px; height: 26px; border-radius: 50%; border: 1.8px solid #a48c71; display: flex; align-items: center; justify-content: center; color: #a48c71; font-weight: 700; font-size: 0.85rem; font-family: sans-serif; line-height: 1;">Rp</div>
+        </div>
+        <div class="laporan-card-info">
+            <span class="laporan-card-title">Total Pendapatan</span>
+            <h2 class="laporan-card-value"><?php echo rupiah($totalPendapatan); ?></h2>
+        </div>
+    </div>
+    
+    <!-- Card 2: Volume Transaksi -->
+    <div class="laporan-card">
+        <div class="laporan-card-icon">
+            <i class="fa-solid fa-arrow-trend-up" style="font-size: 1.35rem; color: #a48c71;"></i>
+        </div>
+        <div class="laporan-card-info">
+            <span class="laporan-card-title">Volume Transaksi</span>
+            <h2 class="laporan-card-value"><?php echo htmlspecialchars($totalTxCount); ?> Tx</h2>
+        </div>
+    </div>
+    
+    <!-- Card 3: Rata-Rata Transaksi -->
+    <div class="laporan-card">
+        <div class="laporan-card-icon">
+            <i class="fa-solid fa-calculator" style="font-size: 1.35rem; color: #a48c71;"></i>
+        </div>
+        <div class="laporan-card-info">
+            <span class="laporan-card-title">Rata-Rata Transaksi</span>
+            <h2 class="laporan-card-value"><?php echo rupiah($rataRataTx); ?></h2>
+        </div>
+    </div>
+</div>
+
+<!-- ===== COMPACT FILTER BAR ===== -->
+<div class="panel" style="margin-bottom: 25px;">
+    <div class="panel-body laporan-top-layout-row" style="padding: 12px 20px; display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
         
-        <!-- Left side: Filter Form -->
-        <form action="admin.php" method="GET" onsubmit="return validateLaporanFilter()" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 0;">
+        <!-- Filter Form -->
+        <form action="admin.php" method="GET" onsubmit="return validateLaporanFilter()" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 0; width: 100%; justify-content: space-between;">
             <input type="hidden" name="page" value="laporan">
             
-            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                <span style="font-size: 0.82rem; font-weight: 600; color: var(--text-dark);">Periode:</span>
-                <input type="date" id="start_date" name="start_date" class="form-control" value="<?php echo htmlspecialchars($startDate); ?>" required style="font-size: 0.82rem; padding: 4px 8px; height: 30px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background: #fff; width: 130px;">
-                <span style="font-size: 0.82rem; color: var(--text-muted);">s/d</span>
-                <input type="date" id="end_date" name="end_date" class="form-control" value="<?php echo htmlspecialchars($endDate); ?>" required style="font-size: 0.82rem; padding: 4px 8px; height: 30px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background: #fff; width: 130px;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-dark);"><i class="fa-solid fa-calendar-days" style="margin-right: 5px; color: var(--accent);"></i> Periode:</span>
+                <input type="date" id="start_date" name="start_date" class="form-control" value="<?php echo htmlspecialchars($startDate); ?>" required style="font-size: 0.85rem; padding: 6px 12px; height: 36px; border: 1px solid var(--border-color); border-radius: 8px; background: #fff; width: 150px; color: var(--text-dark);">
+                <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">s/d</span>
+                <input type="date" id="end_date" name="end_date" class="form-control" value="<?php echo htmlspecialchars($endDate); ?>" required style="font-size: 0.85rem; padding: 6px 12px; height: 36px; border: 1px solid var(--border-color); border-radius: 8px; background: #fff; width: 150px; color: var(--text-dark);">
             </div>
 
-            <div style="display: flex; gap: 5px;">
-                <button type="submit" class="btn-spa" style="padding: 0 12px; height: 30px; font-size: 0.78rem; display: flex; align-items: center; gap: 4px; border-radius: var(--radius-sm);">
-                    <i class="fa-solid fa-filter"></i> Filter
+            <div style="display: flex; gap: 8px;">
+                <button type="submit" class="btn-spa" style="padding: 0 18px; height: 36px; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; border-radius: 8px; font-weight: 600; cursor: pointer; background: #f3ebe1; border: 1px solid var(--border-color); color: var(--text-dark); transition: var(--transition);">
+                    <i class="fa-solid fa-filter" style="color: var(--text-dark);"></i> Filter
                 </button>
                 <a href="admin.php?page=laporan&action=cetak&start_date=<?php echo urlencode($startDate); ?>&end_date=<?php echo urlencode($endDate); ?>"
-                   target="_blank" class="btn-spa btn-spa-accent" style="padding: 0 12px; height: 30px; font-size: 0.78rem; display: flex; align-items: center; gap: 4px; text-decoration: none; border-radius: var(--radius-sm);">
+                   target="_blank" class="btn-spa btn-spa-accent" style="padding: 0 18px; height: 36px; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; text-decoration: none; border-radius: 8px; font-weight: 600; cursor: pointer; background: var(--primary); color: #fff; transition: var(--transition);">
                     <i class="fa-solid fa-print"></i> Cetak (A4)
                 </a>
             </div>
         </form>
 
-        <!-- Right side: Stats Badges -->
-        <div class="laporan-stat-badge-container">
-            <div class="laporan-stat-badge-item">
-                <span class="laporan-stat-badge-label">Pendapatan:</span>
-                <strong class="laporan-stat-badge-value"><?php echo rupiah($totalPendapatan); ?></strong>
-            </div>
-            <div class="laporan-badge-divider"></div>
-            <div class="laporan-stat-badge-item">
-                <span class="laporan-stat-badge-label">Volume:</span>
-                <strong class="laporan-stat-badge-value"><?php echo htmlspecialchars($totalTxCount); ?> Tx</strong>
-            </div>
-            <div class="laporan-badge-divider"></div>
-            <div class="laporan-stat-badge-item">
-                <span class="laporan-stat-badge-label">Rata-rata:</span>
-                <strong class="laporan-stat-badge-value"><?php echo rupiah($rataRataTx); ?></strong>
-            </div>
-        </div>
-
     </div>
 </div>
-
 
 <!-- ===== POPUP VALIDASI ===== -->
 <div id="laporanPopup" style="display: none; position: fixed; inset: 0; z-index: 1200; background: rgba(34, 29, 27, 0.42); align-items: center; justify-content: center; padding: 20px;">
@@ -148,10 +222,11 @@ $rataRataTx = $totalTxCount > 0 ? ($totalPendapatan / $totalTxCount) : 0;
 
 <!-- ===== TABEL RINCIAN ===== -->
 <div class="panel">
-    <div class="panel-header">
-        <h3 class="panel-title">
-            Rincian Transaksi
-            <span style="font-weight: 400; font-size: 0.82rem; color: var(--text-muted); margin-left: 6px;">
+    <div class="panel-header" style="border-bottom: 1px solid var(--border-color); padding: 18px 24px;">
+        <h3 class="panel-title" style="display: flex; align-items: center; gap: 8px; margin: 0; font-size: 1rem; font-weight: 700;">
+            <span style="width: 3px; height: 16px; background-color: var(--accent); display: inline-block; border-radius: 2px;"></span>
+            <span>Rincian Transaksi</span>
+            <span style="font-weight: 400; font-size: 0.82rem; color: var(--text-muted); margin-left: 4px;">
                 (<?php echo date('d M Y', strtotime($startDate)); ?> – <?php echo date('d M Y', strtotime($endDate)); ?>)
             </span>
         </h3>
@@ -161,7 +236,7 @@ $rataRataTx = $totalTxCount > 0 ? ($totalPendapatan / $totalTxCount) : 0;
         <div class="table-responsive">
             <table class="custom-table" data-admin-paginate data-per-page="8" data-noun="data">
                 <thead>
-                    <tr>
+                    <tr style="background-color: #faf7f2;">
                         <th style="width: 50px; text-align: center;">No</th>
                         <th>Kode</th>
                         <th>Pelanggan</th>
@@ -169,7 +244,7 @@ $rataRataTx = $totalTxCount > 0 ? ($totalPendapatan / $totalTxCount) : 0;
                         <th>Layanan SPA</th>
                         <th>Terapis</th>
                         <th>Metode</th>
-                        <th style="text-align: right;">Total (Rp)</th>
+                        <th style="text-align: left;">Total (Rp)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -185,31 +260,37 @@ $rataRataTx = $totalTxCount > 0 ? ($totalPendapatan / $totalTxCount) : 0;
                             <tr>
                                 <td style="text-align: center; font-weight: 600; color: var(--text-muted); font-size: 0.85rem;"><?php echo $no++; ?></td>
                                 <td>
-                                    <strong style="font-family: monospace; font-size: 0.88rem;">TX-<?php echo str_pad($row['idTransaksi'], 5, '0', STR_PAD_LEFT); ?></strong>
+                                    <strong style="font-family: monospace; font-size: 0.88rem; color: var(--accent-hover);">TX-<?php echo str_pad($row['idTransaksi'], 5, '0', STR_PAD_LEFT); ?></strong>
                                 </td>
-                                <td style="font-size: 0.88rem;"><?php echo htmlspecialchars($row['namaPelanggan'] ?? 'Walk-In'); ?></td>
-                                <td style="font-size: 0.83rem; white-space: nowrap;"><?php echo date('d-m-Y H:i', strtotime($row['transactionDate'])); ?></td>
+                                <td style="font-size: 0.88rem; font-weight: 500; color: var(--text-dark);"><?php echo htmlspecialchars($row['namaPelanggan'] ?? 'Walk-In'); ?></td>
+                                <td style="font-size: 0.85rem; color: var(--text-dark); white-space: nowrap;"><?php echo date('d-m-Y H:i', strtotime($row['transactionDate'])); ?></td>
                                 <td>
-                                    <div style="font-size: 0.83rem; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="<?php echo htmlspecialchars($row['layananNames']); ?>">
+                                    <div style="font-size: 0.85rem; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="<?php echo htmlspecialchars($row['layananNames']); ?>">
                                         <?php echo htmlspecialchars($row['layananNames']); ?>
                                     </div>
                                 </td>
-                                <td style="font-size: 0.83rem;">
+                                <td style="font-size: 0.85rem; white-space: nowrap; color: var(--text-dark);">
                                     <?php if ($row['nama_terapis']): ?>
-                                        <i class="fa-solid fa-user-doctor" style="color: var(--accent); font-size: 0.75rem;"></i>
-                                        <?php echo htmlspecialchars($row['nama_terapis']); ?>
+                                        <i class="fa-solid fa-user-doctor" style="color: var(--accent); margin-right: 8px; font-size: 0.82rem;"></i>
+                                        <span><?php echo htmlspecialchars($row['nama_terapis']); ?></span>
                                     <?php else: ?>
                                         <span style="color: var(--text-muted);">—</span>
                                     <?php endif; ?>
                                 </td>
-                                <td style="font-size: 0.83rem;"><?php echo htmlspecialchars(metodeLaporan($row)); ?></td>
-                                <td style="text-align: right; font-weight: 700; color: var(--primary); font-size: 0.9rem;"><?php echo rupiah($row['totalPayment']); ?></td>
+                                <td style="font-size: 0.85rem; white-space: nowrap;">
+                                    <span style="background: rgba(191, 161, 95, 0.06); color: var(--accent-hover); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; display: inline-block;">
+                                        <?php echo htmlspecialchars(metodeLaporan($row)); ?>
+                                    </span>
+                                </td>
+                                <td style="text-align: left; font-weight: 700; color: var(--text-dark); font-size: 0.9rem; white-space: nowrap;">
+                                    <?php echo rupiah($row['totalPayment']); ?>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
 
-                        <tr data-pagination-summary style="background-color: var(--bg-light); font-weight: 800;">
-                            <td colspan="7" style="text-align: right; padding: 14px 20px; font-size: 0.9rem; color: var(--primary);">TOTAL AKUMULASI:</td>
-                            <td style="text-align: right; padding: 14px 20px; font-size: 1.05rem; color: var(--accent-hover);"><?php echo rupiah($totalPendapatan); ?></td>
+                        <tr data-pagination-summary style="background-color: rgba(191, 161, 95, 0.06); font-weight: 800; border-top: 2px solid var(--border-color);">
+                            <td colspan="7" style="text-align: right; padding: 16px 24px !important; font-size: 0.88rem; color: var(--text-dark); letter-spacing: 0.5px; font-weight: 700;">TOTAL AKUMULASI:</td>
+                            <td style="text-align: left; padding: 16px 16px !important; font-size: 1.05rem; color: var(--accent-hover); font-weight: 800;"><?php echo rupiah($totalPendapatan); ?></td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
@@ -219,19 +300,18 @@ $rataRataTx = $totalTxCount > 0 ? ($totalPendapatan / $totalTxCount) : 0;
 </div>
 
 <script>
-function showLaporanPopup(message) {
+function showLaporanPopup(msg) {
     var popup = document.getElementById('laporanPopup');
-    var messageEl = document.getElementById('laporanPopupMessage');
-    if (!popup || !messageEl) return;
-    messageEl.textContent = message;
-    popup.style.display = 'flex';
+    var label = document.getElementById('laporanPopupMessage');
+    if (popup && label) {
+        label.textContent = msg;
+        popup.style.display = 'flex';
+    }
 }
 
 function closeLaporanPopup() {
     var popup = document.getElementById('laporanPopup');
     if (popup) popup.style.display = 'none';
-    var startDate = document.getElementById('start_date');
-    if (startDate) startDate.focus();
 }
 
 function validateLaporanFilter() {

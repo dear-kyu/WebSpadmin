@@ -35,7 +35,10 @@ class LayananController {
             $harga       = floatval($_POST['harga']   ?? 0.0);
             $deskripsi   = trim($_POST['deskripsi']   ?? '');
 
-            if (empty($namaLayanan) || empty($kategori) || $durasi <= 0 || $harga <= 0) {
+            $isAddon = in_array($kategori, ['Tambahan', 'Tambahan Bekam']);
+            $minDurasi = $isAddon ? 0 : 1;
+
+            if (empty($namaLayanan) || empty($kategori) || $durasi < $minDurasi || $harga <= 0) {
                 $_SESSION['errorMsg'] = "Nama layanan, kategori, durasi (menit), dan harga harus diisi dengan benar!";
                 header("Location: admin.php?page=layanan&action=create");
                 exit();
@@ -80,7 +83,10 @@ class LayananController {
             $harga       = floatval($_POST['harga']   ?? 0.0);
             $deskripsi   = trim($_POST['deskripsi']   ?? '');
 
-            if (empty($namaLayanan) || empty($kategori) || $durasi <= 0 || $harga <= 0) {
+            $isAddon = in_array($kategori, ['Tambahan', 'Tambahan Bekam']);
+            $minDurasi = $isAddon ? 0 : 1;
+
+            if (empty($namaLayanan) || empty($kategori) || $durasi < $minDurasi || $harga <= 0) {
                 $_SESSION['errorMsg'] = "Nama layanan, kategori, durasi (menit), dan harga harus diisi dengan benar!";
                 header("Location: admin.php?page=layanan&action=edit&id=" . $id);
                 exit();

@@ -541,7 +541,7 @@ function ambilLayanan($conn, $keyword = '', $kategori = '', $durasi = '', $sort 
         'harga-tertinggi'  => "harga DESC, id_layanan ASC",
         'durasi-terpendek' => "durasi ASC, id_layanan ASC",
         'durasi-terpanjang'=> "durasi DESC, id_layanan ASC",
-        default            => "id_layanan ASC",
+        default            => "id_layanan DESC",
     };
     $sql .= " ORDER BY $orderBy";
 

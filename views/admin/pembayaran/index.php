@@ -88,9 +88,9 @@ if (!function_exists('metodePembayaranAdmin')) {
                                     </div>
                                 </td>
                                 <td>
-                                    <?php echo date('d M Y', strtotime($p['reservation_date'])); ?><br>
-                                    <small style="color: var(--text-muted);"><?php echo date('H:i', strtotime($p['reservation_date'])); ?> WIB</small>
-                                </td>
+                                     <strong><?php echo date('d M Y', strtotime($p['reservation_date'])); ?></strong><br>
+                                     <span style="color: var(--text-muted); font-size: 0.8rem; display: inline-block; margin-top: 4px;"><i class="fa-regular fa-clock" style="margin-right: 3px;"></i> <?php echo date('H:i', strtotime($p['reservation_date'])); ?> WIB</span>
+                                 </td>
                                 <td>
                                     <strong style="color: var(--primary);"><?php echo rupiah($p['nominal_bayar']); ?></strong><br>
                                     <small style="color: var(--accent-hover);"><?php echo htmlspecialchars($p['jenis_pembayaran'] ?? 'DP 50%'); ?></small><br>

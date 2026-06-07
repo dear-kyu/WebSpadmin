@@ -90,12 +90,12 @@ if (!function_exists('rupiah')) {
                     <table class="custom-table">
                         <thead>
                             <tr>
-                                <th>Pelanggan</th>
-                                <th>Layanan</th>
-                                <th>Tanggal & Waktu</th>
-                                <th>Terapis</th>
-                                <th>Status</th>
-                                <th>Aksi</th>
+                                <th style="width: 25%;">Pelanggan</th>
+                                <th style="width: 25%;">Layanan</th>
+                                <th style="width: 25%;">Tanggal &amp; Waktu</th>
+                                <th style="width: 15%;">Terapis</th>
+                                <th style="width: 110px; text-align: center;">Status</th>
+                                <th style="width: 80px; text-align: center;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -109,26 +109,24 @@ if (!function_exists('rupiah')) {
                                 <?php foreach ($recentReservations as $res): ?>
                                     <tr>
                                         <td>
-                                            <strong><?php echo htmlspecialchars($res['namaPelanggan'] ?? $res['namaPelanggan']); ?></strong><br>
-                                            <small style="color: var(--text-muted);"><?php echo htmlspecialchars($res['noHpPelanggan'] ?? $res['noHpPelanggan']); ?></small>
+                                            <strong><?php echo htmlspecialchars($res['namaPelanggan'] ?? $res['namaPelanggan']); ?></strong>
                                         </td>
                                         <td>
-                                            <div style="font-size: 0.88rem; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="<?php echo htmlspecialchars($res['layananNames'] ?? $res['layananNames']); ?>">
+                                            <div style="font-size: 0.88rem; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; display: inline-block; vertical-align: middle;" title="<?php echo htmlspecialchars($res['layananNames'] ?? $res['layananNames']); ?>">
                                                 <?php echo htmlspecialchars($res['layananNames'] ?? $res['layananNames']); ?>
                                             </div>
-                                            <small style="color: var(--accent-hover); font-weight: 600;"><?php echo rupiah($res['totalPrice'] ?? $res['total_price']); ?></small>
                                         </td>
-                                        <td>
+                                        <td style="white-space: nowrap;">
                                             <?php $resDate = $res['reservationDate'] ?? $res['reservation_date']; ?>
-                                            <?php echo date('d M Y', strtotime($resDate)); ?><br>
-                                            <small style="color: var(--text-muted);"><i class="fa-regular fa-clock"></i> <?php echo date('H:i', strtotime($resDate)); ?> WIB</small>
+                                            <strong><?php echo date('d M Y', strtotime($resDate)); ?></strong><br>
+                                            <span style="color: var(--text-muted); font-size: 0.8rem; display: inline-block; margin-top: 4px;"><i class="fa-regular fa-clock" style="margin-right: 3px;"></i> <?php echo date('H:i', strtotime($resDate)); ?> WIB</span>
                                         </td>
                                         <td>
                                             <?php $tName = $res['namaTerapis'] ?? $res['nama_terapis']; ?>
                                             <?php if ($tName): ?>
-                                                <span style="font-weight: 500;"><i class="fa-solid fa-user-doctor" style="color: var(--accent); margin-right: 5px;"></i> <?php echo htmlspecialchars($tName); ?></span>
+                                                <span style="font-weight: 600; color: var(--primary-light); white-space: nowrap;"><i class="fa-solid fa-user-doctor" style="color: var(--accent); margin-right: 4px;"></i> <?php echo htmlspecialchars($tName); ?></span>
                                             <?php else: ?>
-                                                <span class="badge badge-secondary" style="font-size: 0.75rem;"><i class="fa-solid fa-circle-question" style="margin-right: 5px;"></i> Belum Ada</span>
+                                                <span class="badge badge-secondary" style="font-size: 0.75rem; white-space: nowrap;"><i class="fa-solid fa-circle-question" style="margin-right: 4px;"></i> Belum Ditugaskan</span>
                                             <?php endif; ?>
                                         </td>
                                         <td>
