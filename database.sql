@@ -249,11 +249,29 @@ INSERT INTO `ruangan` (`id_ruangan`, `nama_ruangan`, `status`) VALUES
 
 -- 5. Seeding `ulasan`
 INSERT INTO `ulasan` (`id_ulasan`, `user_id`, `id_layanan`, `rating`, `ulasan`, `balasan_admin`) VALUES
-(1, 2, 12, 5, 'Pijatan Hot Stone-nya pas banget di badan. Pegel-pegel abis kerja seharian langsung ilang dalam sekali sesi.', NULL),
-(2, 3, 13, 5, 'Gampang banget booking lewat webnya, ga ribet. Terapisnya ramah, sopan, kamarnya juga wangi and bersih banget.', NULL),
-(3, 4, 14, 4, 'Teknik deep tissue terapisnya mantap banget sih. Pas pulang kerasa enteng and seger banget badannya.', NULL),
-(4, 5, 2, 5, 'Pijatannya teratur and ga bikin sakit. Ditambah wangi aromaterapi lavendernya bikin tenang, nyaris ketiduran tadi.', NULL),
-(5, 6, 2, 5, 'Kualitas layanannya oke punya buat spa di Bandung. Suasananya tenang and privasinya bener-bener terjaga.', NULL);
+(1, 2, 1, 5, 'Pundak pegel-pegel abis nyetir langsung enakan abis dipijat belakang di sini. Mantap!', NULL),
+(2, 3, 2, 5, 'Udah langganan pijat sehat yang 90 menit. Badan berasa enteng banget kalau abis dipijat mbaknya.', NULL),
+(3, 4, 3, 5, 'Durasi 2 jam puas banget sih, pijatannya merata dari kaki sampe kepala. Recommended!', NULL),
+(4, 5, 4, 4, 'Refleksinya enak, titik pegel di telapak kaki bener-bener dapet. Kamarnya juga adem.', NULL),
+(5, 6, 5, 5, 'Enak banget pijat refleksinya pas pegel abis jalan-jalan seharian. Durasi 90 menit pas banget.', NULL),
+(6, 2, 6, 5, 'Garam rendam kakinya bikin rileks sebelum pijat utama. Kakinya jadi anget.', NULL),
+(7, 3, 7, 5, 'Beli extra time 15 menit gara-gara masih kepengen dipijat punggungnya, mantap ga pelit waktu.', NULL),
+(8, 4, 8, 5, 'Nambah 30 menit bener-bener worth it, jadi bisa tidur sebentar pas dipijat.', NULL),
+(9, 5, 9, 5, 'Aroma bakarnya wangi and relaxing banget, bikin tambah betah and gak pengen pulang.', NULL),
+(10, 6, 10, 5, 'Paket Dulang lengkap kap-kap! Ada lulur, pijat, terus totok wajah juga. Worth every penny pokoknya.', NULL),
+(11, 2, 11, 5, 'Coba paket Talam and ternyata sesegar itu! Wajah jadi auto glowing pas selesai totok.', NULL),
+(12, 3, 12, 5, 'Kombinasi refleksi ama pijat sehat paling pas buat kaum jompo kayak saya. Top markotop!', NULL),
+(13, 4, 13, 5, 'Abis bekam rasanya enteng bgt badan, racun-racun kayaknya keluar semua nih. Terapisnya steril and profesional.', NULL),
+(14, 5, 14, 5, 'Pijatannya mantap, ditambah totok wajah bikin ngantuk bgt. Paling recommended paket ini.', NULL),
+(15, 6, 15, 5, 'Lulurannya bersih bgt, daki rontok semua wkwk. Badan jadi harum and halus abis treatment.', NULL),
+(16, 2, 16, 5, 'Sensasi borehnya anget di badan, cocok bgt dipake pas cuaca lagi dingin atau pas lg masuk angin.', NULL),
+(17, 3, 17, 5, 'Boreh khas Bali-nya wangi and anget bgt. Ditambah pijatannya yang mantap, jd kerasa kayak lg liburan.', NULL),
+(18, 4, 18, 4, 'Totok wajahnya enak bgt, kerasa banget aliran darah di muka jd lancar. Muka jd seger.', NULL),
+(19, 5, 19, 5, 'Kerokannya jos gandoz, langsung merah-merah semua and masuk anginnya ilang seketika.', NULL),
+(20, 6, 20, 5, 'Bekam keringnya mantap buat ngilangin pegel di punggung tanpa rasa sakit sama sekali.', NULL),
+(21, 2, 21, 5, 'Bekam basahnya bersih, jarumnya steril and langsung dibuang di depan kita. Darah kotor keluar semua.', NULL),
+(22, 3, 22, 5, 'Nambah 1 titik bekam basah di pundak yg paling pegel, sekarang langsung plong.', NULL),
+(23, 4, 23, 5, 'Nambah titik bekam kering di pinggang, rasanya langsung enteng bgt dipake jalan.', NULL);
 
 -- 6. Seeding `pengaturan_halaman`
 INSERT INTO `pengaturan_halaman` (`kunci`, `nilai`) VALUES

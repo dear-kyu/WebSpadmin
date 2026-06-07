@@ -1,1 +1,1 @@
-cart|a:0:{}adminLoggedIn|b:1;adminId|i:1;adminUsername|s:17:"admin@spadmin.com";adminNama|s:11:"Diah(Admin)";
+cart|a:1:{i:4;a:6:{s:2:"id";i:4;s:4:"nama";s:8:"Refleksi";s:5:"harga";i:89000;s:8:"kategori";s:8:"Refleksi";s:6:"durasi";i:60;s:5:"media";s:13:"Refleksi.jpeg";}}user_id|i:2;nama|s:4:"sari";email|s:14:"roku@gmail.com";role|s:9:"pelanggan";adminLoggedIn|b:1;adminId|i:1;adminUsername|s:17:"admin@spadmin.com";adminNama|s:11:"Diah(Admin)";

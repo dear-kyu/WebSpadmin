@@ -40,17 +40,17 @@
                                         <span class="badge badge-secondary"><i class="fa-solid fa-circle-xmark" style="margin-right: 5px;"></i> Tidak Aktif</span>
                                     <?php endif; ?>
                                 </td>
-                                <td style="text-align: center;">
-                                    <div class="btn-actions" style="justify-content: center; gap: 10px;">
-                                        <a href="admin.php?page=ruangan&action=edit&id=<?php echo $r['id_ruangan']; ?>" class="btn-spa btn-spa-outline" style="padding: 6px 12px; font-size: 0.8rem; gap: 5px;">
+                                <td style="text-align: center; white-space: nowrap;">
+                                    <div class="btn-actions" style="justify-content: center; gap: 10px; flex-wrap: nowrap;">
+                                        <a href="admin.php?page=ruangan&action=edit&id=<?php echo $r['id_ruangan']; ?>" class="btn-spa btn-spa-outline" style="padding: 6px 12px; font-size: 0.8rem; gap: 5px; white-space: nowrap;">
                                             <i class="fa-solid fa-pen-to-square"></i> Edit Nama
                                         </a>
                                         <?php if ($r['status'] === 'aktif'): ?>
-                                            <a href="admin.php?page=ruangan&action=toggle&id=<?php echo $r['id_ruangan']; ?>" class="btn-spa btn-spa-outline" style="padding: 6px 12px; font-size: 0.8rem; gap: 5px; color: var(--danger); border-color: rgba(211, 47, 47, 0.2);">
+                                            <a href="admin.php?page=ruangan&action=toggle&id=<?php echo $r['id_ruangan']; ?>" class="btn-spa btn-spa-outline" style="padding: 6px 12px; font-size: 0.8rem; gap: 5px; color: var(--danger); border-color: rgba(211, 47, 47, 0.2); white-space: nowrap;">
                                                 <i class="fa-solid fa-power-off"></i> Nonaktifkan
                                             </a>
                                         <?php else: ?>
-                                            <a href="admin.php?page=ruangan&action=toggle&id=<?php echo $r['id_ruangan']; ?>" class="btn-spa btn-spa-accent" style="padding: 6px 12px; font-size: 0.8rem; gap: 5px;">
+                                            <a href="admin.php?page=ruangan&action=toggle&id=<?php echo $r['id_ruangan']; ?>" class="btn-spa btn-spa-accent" style="padding: 6px 12px; font-size: 0.8rem; gap: 5px; white-space: nowrap;">
                                                 <i class="fa-solid fa-circle-check"></i> Aktifkan
                                             </a>
                                         <?php endif; ?>

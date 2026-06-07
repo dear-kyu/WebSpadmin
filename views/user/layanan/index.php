@@ -153,7 +153,7 @@
                     <label class="layanan-search-control">
                         <span class="visually-hidden">Cari layanan</span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                        <input type="text" name="keyword" placeholder="Cari massage, facial, reflexology..." value="<?= e($keyword) ?>">
+                        <input type="text" name="keyword" placeholder="Cari pijat sehat, lulur, bekam..." value="<?= e($keyword) ?>">
                     </label>
 
                     <details class="kategori-dropdown">

@@ -42,7 +42,7 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label for="durasi">Durasi Perawatan (Menit)</label>
-                    <input type="number" id="durasi" name="durasi" class="form-control" value="<?php echo htmlspecialchars($layanan['durasi']); ?>" min="1" required autocomplete="off">
+                    <input type="number" id="durasi" name="durasi" class="form-control" value="<?php echo htmlspecialchars($layanan['durasi']); ?>" min="0" required autocomplete="off">
                 </div>
                 
                 <div class="form-group">
@@ -92,3 +92,29 @@
         </form>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const kategoriSelect = document.getElementById('kategori');
+    const durasiInput = document.getElementById('durasi');
+    
+    function updateMinDurasi() {
+        const val = kategoriSelect.value;
+        if (val === 'Tambahan' || val === 'Tambahan Bekam') {
+            durasiInput.min = '0';
+            durasiInput.placeholder = 'Contoh: 0 (bisa 0 untuk layanan tambahan)';
+        } else {
+            durasiInput.min = '1';
+            durasiInput.placeholder = 'Contoh: 90';
+            if (parseInt(durasiInput.value) === 0) {
+                durasiInput.value = '';
+            }
+        }
+    }
+    
+    if (kategoriSelect && durasiInput) {
+        kategoriSelect.addEventListener('change', updateMinDurasi);
+        updateMinDurasi();
+    }
+});
+</script>

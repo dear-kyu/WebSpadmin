@@ -42,16 +42,16 @@ if (!function_exists('rupiah')) {
             <table class="custom-table" data-admin-paginate data-per-page="6" data-noun="data">
                 <thead>
                     <tr>
-                        <th style="width: 80px; text-align: center;">No</th>
-                        <th>Kode Transaksi</th>
-                        <th>Pelanggan</th>
-                        <th>Layanan SPA</th>
-                        <th>Tanggal Transaksi</th>
-                        <th>Total Transaksi</th>
-                        <th>Metode Bayar</th>
-                        <th>Status</th>
-                        <th>Kasir (Admin)</th>
-                        <th style="width: 120px; text-align: center;">Struk</th>
+                        <th style="width: 70px; white-space: nowrap;">No</th>
+                        <th style="width: 140px; white-space: nowrap;">Kode Transaksi</th>
+                        <th style="width: 15%; white-space: nowrap;">Pelanggan</th>
+                        <th style="width: 20%; white-space: nowrap;">Layanan SPA</th>
+                        <th style="width: 180px; white-space: nowrap;">Tanggal Transaksi</th>
+                        <th style="width: 130px; white-space: nowrap;">Total Transaksi</th>
+                        <th style="width: 12%; white-space: nowrap;">Metode Bayar</th>
+                        <th style="width: 10%; white-space: nowrap;">Status</th>
+                        <th style="width: 15%; white-space: nowrap;">Kasir (Admin)</th>
+                        <th style="width: 90px; text-align: center; white-space: nowrap;">Struk</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -67,30 +67,29 @@ if (!function_exists('rupiah')) {
                         foreach ($transaksiList as $tx):
                         ?>
                             <tr>
-                                <td style="text-align: center; font-weight: 600; color: var(--text-muted);"><?php echo $no++; ?></td>
-                                <td>
+                                <td style="font-weight: 600; color: var(--text-muted); white-space: nowrap;"><?php echo $no++; ?></td>
+                                <td style="white-space: nowrap;">
                                     <strong style="font-family: monospace; font-size: 0.95rem; color: var(--primary-light);">TX-<?php echo str_pad($tx['idTransaksi'], 5, '0', STR_PAD_LEFT); ?></strong>
                                 </td>
-                                <td>
-                                    <strong><?php echo htmlspecialchars($tx['namaPelanggan'] ?? 'Pelanggan Walk-In'); ?></strong><br>
-                                    <small class="text-muted"><?php echo htmlspecialchars($tx['noHpPelanggan'] ?? '-'); ?></small>
+                                <td style="white-space: nowrap;">
+                                    <strong><?php echo htmlspecialchars($tx['namaPelanggan'] ?? 'Pelanggan Walk-In'); ?></strong>
                                 </td>
-                                <td>
-                                    <div style="font-size: 0.88rem; max-width: 220px; white-space: normal; word-break: break-word; line-height: 1.45;">
+                                <td style="white-space: nowrap;">
+                                    <div style="font-size: 0.88rem; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; vertical-align: middle;" title="<?php echo htmlspecialchars($tx['layananNames']); ?>">
                                         <?php echo htmlspecialchars($tx['layananNames']); ?>
                                     </div>
                                 </td>
-                                <td>
-                                    <?php echo date('d M Y', strtotime($tx['transactionDate'])); ?><br>
-                                    <small style="color: var(--text-muted);"><?php echo date('H:i', strtotime($tx['transactionDate'])); ?> WIB</small>
+                                <td style="white-space: nowrap;">
+                                    <strong><?php echo date('d M Y', strtotime($tx['transactionDate'])); ?></strong><br>
+                                    <span style="color: var(--text-muted); font-size: 0.8rem; display: inline-block; margin-top: 4px;"><i class="fa-regular fa-clock" style="margin-right: 3px;"></i> <?php echo date('H:i', strtotime($tx['transactionDate'])); ?> WIB</span>
                                 </td>
-                                <td>
+                                <td style="white-space: nowrap;">
                                     <strong style="color: var(--accent-hover); font-size: 1.05rem;"><?php echo rupiah($tx['totalPayment']); ?></strong>
                                 </td>
-                                <td>
+                                <td style="white-space: nowrap;">
                                     <span style="font-weight: 500;"><i class="fa-solid fa-wallet text-muted mr-1" style="margin-right: 5px;"></i> <?php echo htmlspecialchars($tx['paymentMethod'] ?? 'Tunai'); ?></span>
                                 </td>
-                                <td>
+                                <td style="white-space: nowrap;">
                                     <?php if ($tx['statusPayment'] === 'Lunas' || ($tx['statusPayment'] === 'verified' && ($tx['reservation_type'] ?? '') === 'Walk-in') || empty($tx['statusPayment'])): ?>
                                         <span class="badge badge-success"><i class="fa-solid fa-circle-check" style="margin-right: 5px;"></i> Lunas</span>
                                     <?php elseif ($tx['statusPayment'] === 'verified' && ($tx['reservation_type'] ?? '') === 'online'): ?>
@@ -101,10 +100,10 @@ if (!function_exists('rupiah')) {
                                         <span class="badge badge-danger"><i class="fa-solid fa-circle-xmark" style="margin-right: 5px;"></i> Gagal</span>
                                     <?php endif; ?>
                                 </td>
-                                <td>
-                                    <small style="color: var(--text-muted);"><i class="fa-solid fa-user-tie"></i> <?php echo htmlspecialchars($tx['namaAdmin'] ?? 'Admin SPADMIN'); ?></small>
+                                <td style="white-space: nowrap;">
+                                    <small style="color: var(--text-muted);"><i class="fa-solid fa-user-tie" style="margin-right: 3px;"></i> <?php echo htmlspecialchars($tx['namaAdmin'] ?? 'Admin SPADMIN'); ?></small>
                                 </td>
-                                <td style="text-align: center;">
+                                <td style="text-align: center; white-space: nowrap;">
                                     <a href="admin.php?page=transaksi&action=detail&id=<?php echo $tx['idTransaksi']; ?>" class="btn-spa btn-spa-outline" style="padding: 6px 12px; font-size: 0.8rem; gap: 5px;">
                                         <i class="fa-solid fa-receipt"></i> Detail
                                     </a>

@@ -184,7 +184,7 @@ if (strpos($namaLayananLower, 'wajah') !== false || strpos($namaLayananLower, 'f
                 
                 <div class="terapis-grid-new flex-grow-1">
                     <?php 
-                    $qualifiedTherapists = $terapis;
+                    $qualifiedTherapists = array_slice($terapis, 0, 3);
                     ?>
 
                     <?php if (empty($qualifiedTherapists)): ?>

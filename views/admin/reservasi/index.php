@@ -56,13 +56,13 @@ $statusFilter = isset($_GET['status']) ? trim($_GET['status']) : 'Semua';
             <table class="custom-table" data-admin-paginate data-per-page="6" data-noun="data">
                 <thead>
                     <tr>
-                        <th style="width: 80px; text-align: center;">ID</th>
-                        <th>Profil Pelanggan</th>
-                        <th>Layanan SPA</th>
-                        <th>Tanggal &amp; Jam Reservasi</th>
-                        <th>Terapis Bertugas</th>
-                        <th>Status</th>
-                        <th style="width: 120px; text-align: center;">Detail</th>
+                        <th style="width: 60px; text-align: center;">ID</th>
+                        <th style="width: 22%;">Profil Pelanggan</th>
+                        <th style="width: 22%;">Layanan SPA</th>
+                        <th style="width: 23%;">Tanggal &amp; Jam Reservasi</th>
+                        <th style="width: 17%;">Terapis Bertugas</th>
+                        <th style="width: 160px; text-align: center;">Status</th>
+                        <th style="width: 90px; text-align: center;">Detail</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -77,33 +77,26 @@ $statusFilter = isset($_GET['status']) ? trim($_GET['status']) : 'Semua';
                             <tr>
                                 <td style="text-align: center; font-weight: 600; color: var(--text-muted);">#<?php echo $r['id_reservasi']; ?></td>
                                 <td>
-                                    <strong><?php echo htmlspecialchars($r['namaPelanggan']); ?></strong><br>
-                                    <small style="color: var(--text-muted);"><i class="fa-solid fa-phone" style="font-size: 0.75rem; margin-right: 3px;"></i> <?php echo htmlspecialchars($r['noHpPelanggan']); ?></small>
+                                    <strong><?php echo htmlspecialchars($r['namaPelanggan']); ?></strong>
                                 </td>
                                 <td>
-                                    <div style="font-size: 0.9rem; font-weight: 600; max-width: 250px; white-space: normal; line-height: 1.4; word-break: break-word;">
+                                    <div style="font-weight: 600; max-width: 250px; display: inline-block; white-space: normal; line-height: 1.4; word-break: break-word; vertical-align: middle;">
                                         <?php echo htmlspecialchars($r['layananNames']); ?>
                                     </div>
-                                    <small style="color: var(--accent-hover); font-weight: 600;"><?php echo rupiah($r['totalPrice']); ?></small>
                                 </td>
-                                <td>
+                                <td style="white-space: nowrap;">
                                     <strong><?php echo date('d M Y', strtotime($r['reservationDate'])); ?></strong><br>
-                                    <small style="color: var(--text-muted);"><i class="fa-regular fa-clock"></i> Jam <?php echo date('H:i', strtotime($r['reservationDate'])); ?> WIB</small>
+                                    <span style="color: var(--text-muted); font-size: 0.8rem; display: inline-block; margin-top: 4px;"><i class="fa-regular fa-clock" style="margin-right: 3px;"></i> <?php echo date('H:i', strtotime($r['reservationDate'])); ?> WIB</span>
                                 </td>
                                 <td>
                                     <?php if ($r['namaTerapis']): ?>
-                                        <div style="font-weight: 600; color: var(--primary-light);">
-                                            <i class="fa-solid fa-user-doctor" style="color: var(--accent); margin-right: 5px; width: 14px;"></i> <?php echo htmlspecialchars($r['namaTerapis']); ?>
-                                        </div>
+                                        <span style="font-weight: 600; color: var(--primary-light); white-space: nowrap;">
+                                            <i class="fa-solid fa-user-doctor" style="color: var(--accent); margin-right: 4px;"></i> <?php echo htmlspecialchars($r['namaTerapis']); ?>
+                                        </span>
                                     <?php else: ?>
-                                        <div class="badge badge-secondary" style="font-size: 0.75rem; margin-bottom: 4px;">
+                                        <span class="badge badge-secondary" style="font-size: 0.75rem; white-space: nowrap;">
                                             <i class="fa-solid fa-circle-question" style="margin-right: 4px;"></i> Belum Ditugaskan
-                                        </div>
-                                    <?php endif; ?>
-                                    <?php if (!empty($r['namaRuangan'])): ?>
-                                        <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 4px; font-weight: 500;">
-                                            <i class="fa-solid fa-door-open" style="color: var(--accent); margin-right: 5px; width: 14px;"></i> <?php echo htmlspecialchars($r['namaRuangan']); ?>
-                                        </div>
+                                        </span>
                                     <?php endif; ?>
                                 </td>
                                 <td>

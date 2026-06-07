@@ -151,6 +151,30 @@ class PengaturanController {
                 exit();
             }
 
+            // Validasi batas rentang operasional sesi
+            $pMulaiNorm = date('H:i', strtotime($pMulai));
+            $pSelesaiNorm = date('H:i', strtotime($pSelesai));
+            $sMulaiNorm = date('H:i', strtotime($sMulai));
+            $sSelesaiNorm = date('H:i', strtotime($sSelesai));
+            $soMulaiNorm = date('H:i', strtotime($soMulai));
+            $soSelesaiNorm = date('H:i', strtotime($soSelesai));
+
+            if ($pMulaiNorm < '09:00' || $pSelesaiNorm > '11:30') {
+                $_SESSION['errorMsg'] = "Konfigurasi tidak valid: Sesi Pagi harus berada dalam rentang jam 09:00 - 11:30.";
+                header('Location: admin.php?page=pengaturan');
+                exit();
+            }
+            if ($sMulaiNorm < '12:00' || $sSelesaiNorm > '16:30') {
+                $_SESSION['errorMsg'] = "Konfigurasi tidak valid: Sesi Siang harus berada dalam rentang jam 12:00 - 16:30.";
+                header('Location: admin.php?page=pengaturan');
+                exit();
+            }
+            if ($soMulaiNorm < '17:00' || $soSelesaiNorm > '20:00') {
+                $_SESSION['errorMsg'] = "Konfigurasi tidak valid: Sesi Sore harus berada dalam rentang jam 17:00 - 20:00.";
+                header('Location: admin.php?page=pengaturan');
+                exit();
+            }
+
             if ($sMulai < $pSelesai) {
                 $_SESSION['errorMsg'] = "Konfigurasi tidak valid: Sesi Siang harus dimulai setelah Sesi Pagi selesai ({$pSelesai}).";
                 header('Location: admin.php?page=pengaturan');
